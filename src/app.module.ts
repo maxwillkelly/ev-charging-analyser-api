@@ -15,7 +15,7 @@ import { LocationController } from './location/location.controller';
 import { LocationService } from './location/location.service';
 
 const validationSchema = Joi.object({
-  SERVER_PORT: Joi.number().default(5000),
+  PORT: Joi.number().default(5000),
   SMARTCAR_CLIENT_ID: Joi.string().uuid(),
   SMARTCAR_CLIENT_SECRET: Joi.string().uuid(),
   SMARTCAR_REDIRECT_URI: Joi.string().uri(),

@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('SERVER_PORT') as number;
+  const port = configService.get<number>('PORT') as number;
 
   const config = new DocumentBuilder()
     .setTitle('ev-charging-analyser-server')
