@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      context: .
+      target: development
+    env_file:
+      - ./config/dev.env
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+      - 9229:9229
+    command: yarn start:dev
+    networks:
+      - api-cassandra
+      - api-postgres
+    depends_on:
+      - cassandra
+      - postgres
