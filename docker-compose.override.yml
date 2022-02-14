@@ -1,6 +1,15 @@
 version: '3.7'
 
 services:
+  api:
+    env_file:
+      - ./config/local.env
+    networks:
+      - api-cassandra
+      - api-postgres
+    depends_on:
+      - cassandra
+      - postgres
   cassandra:
     image: cassandra:4.0
     environment:

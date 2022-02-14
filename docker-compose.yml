@@ -5,8 +5,6 @@ services:
     build:
       context: .
       target: development
-    env_file:
-      - ./config/dev.env
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -14,9 +12,3 @@ services:
       - ${PORT}:${PORT}
       - 9229:9229
     command: yarn start:dev
-    networks:
-      - api-cassandra
-      - api-postgres
-    depends_on:
-      - cassandra
-      - postgres
