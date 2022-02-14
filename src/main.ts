@@ -14,8 +14,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') as number;
 
-  console.log(process.env);
-
   const config = new DocumentBuilder()
     .setTitle('ev-charging-analyser-server')
     .setDescription('API for Analysing EV Charging Habits')
@@ -28,4 +26,5 @@ async function bootstrap() {
   await app.listen(port);
 }
 
+console.log(process.env);
 bootstrap();
