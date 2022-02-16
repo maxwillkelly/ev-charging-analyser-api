@@ -31,6 +31,6 @@ export class LocationController {
 
   @Post('user')
   async recordUserLocation(@Body() dto: RecordUserLocation) {
-    // return this.locationService.recordLocation(dto);
+    return this.locationService.recordUserLocation(dto);
   }
 }
