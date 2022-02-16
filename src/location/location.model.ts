@@ -5,4 +5,9 @@ export class Location {
   longitude: number;
   latitude: number;
   recordedAt: string;
+  altitude?: number;
+  heading?: number;
+  altitudeAccuracy: number;
+  speed: number;
+  accuracy: number;
 }

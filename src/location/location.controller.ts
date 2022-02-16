@@ -6,7 +6,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { RecordLocation } from './dtos/recordLocation.dto';
+import { RecordCarLocation } from './dtos/recordCarLocation.dto';
+import { RecordUserLocation } from './dtos/recordUserLocation.dto';
 import { LocationService } from './location.service';
 
 @Controller('location')
@@ -23,8 +24,13 @@ export class LocationController {
     return this.locationService.getLocationById(id);
   }
 
-  @Post()
-  async recordLocation(@Body() dto: RecordLocation) {
-    return this.locationService.recordLocation(dto);
+  @Post('car')
+  async recordCarLocation(@Body() dto: RecordCarLocation) {
+    return this.locationService.recordCarLocation(dto);
+  }
+
+  @Post('user')
+  async recordUserLocation(@Body() dto: RecordUserLocation) {
+    // return this.locationService.recordLocation(dto);
   }
 }
