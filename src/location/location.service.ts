@@ -68,7 +68,7 @@ export class LocationService implements OnModuleInit {
 
   convertUnixTimeToDateString(unixTime: number): string {
     const dateObject = new Date(unixTime * 1000);
-    return dateObject.toLocaleString();
+    return dateObject.toISOString();
   }
 
   async recordUserLocation(location: RecordUserLocation): Promise<Location[]> {
