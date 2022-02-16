@@ -67,7 +67,7 @@ export class LocationService implements OnModuleInit {
   }
 
   convertUnixTimeToDateString(unixTime: number): string {
-    const dateObject = new Date(unixTime * 1000);
+    const dateObject = new Date(unixTime);
     return dateObject.toISOString();
   }
 
