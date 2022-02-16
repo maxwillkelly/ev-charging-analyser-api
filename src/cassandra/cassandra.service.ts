@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { auth, Client, mapping } from 'cassandra-driver';
+import { auth, Client, mapping, types } from 'cassandra-driver';
 import { ConfigService } from '@nestjs/config';
 import fs from 'fs';
 
@@ -59,6 +59,7 @@ export class CassandraService {
       authProvider,
       sslOptions,
       protocolOptions,
+      queryOptions: { consistency: types.consistencies.localQuorum },
     });
   }
 
