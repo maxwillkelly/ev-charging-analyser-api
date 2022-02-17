@@ -9,6 +9,7 @@ import SmartCar, {
   Location,
   Vehicle,
 } from 'smartcar';
+import { SmartCarAPIUserDto } from './dtos/user.dto';
 
 @Injectable()
 export class SmartCarService {
@@ -104,5 +105,10 @@ export class SmartCarService {
   async unlockCar(smartCarAccessToken: string): Promise<ActionResponse> {
     const vehicle = await this.getVehicle(smartCarAccessToken);
     return await vehicle.unlock();
+  }
+
+  async getUser(): Promise<SmartCarAPIUserDto> {
+    const user = await this.getUser();
+    return user;
   }
 }
