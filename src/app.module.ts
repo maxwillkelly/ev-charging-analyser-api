@@ -13,6 +13,7 @@ import { CarsController } from './cars/cars.controller';
 import { CassandraService } from './cassandra/cassandra.service';
 import { LocationController } from './location/location.controller';
 import { LocationService } from './location/location.service';
+import { CarLocationService } from './car-location/car-location.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -53,6 +54,7 @@ const validationSchema = Joi.object({
     UsersService,
     CassandraService,
     LocationService,
+    CarLocationService,
   ],
 })
 export class AppModule {}

@@ -6,10 +6,8 @@ import SmartCar, {
   Attributes,
   AuthClient,
   Battery,
-  getVehicles,
   Location,
   Vehicle,
-  VehicleIds,
 } from 'smartcar';
 
 @Injectable()
@@ -35,7 +33,7 @@ export class SmartCarService {
     const scope = [
       'required:read_battery',
       'required:read_charge',
-      'required:control_charge',
+      // 'required:control_charge',
       'required:read_location',
       'required:control_security',
       // 'required:read_odometer',
