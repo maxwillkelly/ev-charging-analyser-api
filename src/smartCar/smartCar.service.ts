@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SmartCarUser } from '@prisma/client';
+import { isPast } from 'date-fns';
 import SmartCar, {
   Access,
   ActionResponse,
@@ -9,13 +11,17 @@ import SmartCar, {
   Location,
   Vehicle,
 } from 'smartcar';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { SmartCarAPIUserDto } from './dtos/user.dto';
 
 @Injectable()
 export class SmartCarService {
   private readonly client: AuthClient = null;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prismaService: PrismaService,
+  ) {
     const clientId = this.configService.get<string>('SMARTCAR_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'SMARTCAR_CLIENT_SECRET',
@@ -47,6 +53,28 @@ export class SmartCarService {
 
   exchange(code: string): Access {
     return this.client.exchangeCode(code);
+  }
+
+  async getAccessToken(userId: string): Promise<string> {
+    let smartCarUser: SmartCarUser = await this.prismaService.user
+      .findUnique({
+        where: { id: userId },
+        select: {
+          smartCarUser: true,
+        },
+      })
+      .then((u) => u.smartCarUser);
+
+    if (isPast(smartCarUser.accessExpiration)) {
+      const data = this.client.exchangeRefreshToken(smartCarUser.refreshToken);
+
+      smartCarUser = await this.prismaService.smartCarUser.update({
+        where: { userId },
+        data,
+      });
+    }
+
+    return smartCarUser.accessToken;
   }
 
   async getVehicles(smartCarAccessToken: string): Promise<Vehicle[]> {
