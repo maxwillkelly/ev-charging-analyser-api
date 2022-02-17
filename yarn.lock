@@ -4847,10 +4847,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-smartcar@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/smartcar/-/smartcar-8.0.1.tgz#39e0423c8504485ec799daf7efe86483c6de7962"
-  integrity sha512-OpUiJdz/s65auvvsuYJZMCSzpbt7AoOGi5UON7Ub9Bid0Rz1DTosNVtvfiuYOJPk6fWWupNsllrnjBSlEuzaeA==
+smartcar@^9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/smartcar/-/smartcar-9.1.1.tgz#1a4bddedf02ab61cf7b1a20df834d5c5dd6754a6"
+  integrity sha512-1JW6fjFDJ+1bT7l/DYuuy0MN+7OFp01C/vq+1lPkmES4rC0RfLGUIcMT5l1QOWoLHzB2Va7Mxi21xkTD+EgXxA==
   dependencies:
     bluebird "^3.5.5"
     lodash "^4.17.5"
