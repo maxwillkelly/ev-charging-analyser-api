@@ -23,7 +23,7 @@ model User {
 }
 
 model SmartcarUser {
-  id                String    @id
+  id                String
   accessToken       String
   accessExpiration  DateTime
   refreshToken      String
@@ -33,12 +33,15 @@ model SmartcarUser {
   vehicles          Vehicle[]
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+
+  @@id([id, userId])
 }
 
 model Vehicle {
-  id             String       @id @default(uuid())
-  smartCarUser   SmartcarUser @relation(fields: [smartCarUserId], references: [id])
-  smartCarUserId String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id             String        @id @default(uuid())
+  smartcarUser   SmartcarUser? @relation(fields: [smartcarUserId, userId], references: [id, userId])
+  smartcarUserId String?
+  userId         String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
