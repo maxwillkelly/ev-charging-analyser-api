@@ -51,11 +51,11 @@ export class SmartCarService {
     return this.client.getAuthUrl(scope);
   }
 
-  exchange(code: string): Access {
-    return this.client.exchangeCode(code);
+  async exchangeAsync(code: string): Promise<Access> {
+    return await this.client.exchangeCode(code);
   }
 
-  async getAccessToken(userId: string): Promise<string> {
+  async getAccessTokenAsync(userId: string): Promise<string> {
     let smartCarUser: SmartCarUser = await this.prismaService.user
       .findUnique({
         where: { id: userId },
@@ -66,7 +66,9 @@ export class SmartCarService {
       .then((u) => u.smartCarUser);
 
     if (isPast(smartCarUser.accessExpiration)) {
-      const data = this.client.exchangeRefreshToken(smartCarUser.refreshToken);
+      const data = await this.client.exchangeRefreshToken(
+        smartCarUser.refreshToken,
+      );
 
       smartCarUser = await this.prismaService.smartCarUser.update({
         where: { userId },

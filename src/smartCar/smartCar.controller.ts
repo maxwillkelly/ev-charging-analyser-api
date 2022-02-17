@@ -21,7 +21,7 @@ export class SmartCarController {
   ): Promise<Access | Error> {
     if (error) return new Error(error);
 
-    return this.smartCarService.exchange(code);
+    return await this.smartCarService.exchangeAsync(code);
   }
 
   @Get('vehicle')

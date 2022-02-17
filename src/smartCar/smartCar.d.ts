@@ -232,7 +232,7 @@ declare module 'smartcar' {
      * value is string or boolean value.
      * @returns New set of Access and Refresh tokens.
      */
-    exchangeCode(code: string): Access;
+    async exchangeCode(code: string): Promise<Access>;
     /**
      * Exchange a refresh token for a new access object.
      * @param token - Refresh token to exchange for a new set of Access and
@@ -241,7 +241,7 @@ declare module 'smartcar' {
      * value is string or boolean value.
      * @returns New set of Access and Refresh tokens.
      */
-    exchangeRefreshToken(token: string): Access;
+    async exchangeRefreshToken(token: string): Promise<Access>;
   }
 
   /**
