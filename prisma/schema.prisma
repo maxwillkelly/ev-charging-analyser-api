@@ -27,7 +27,7 @@ model SmartCarUser {
   accessToken       String
   accessExpiration  DateTime
   refreshToken      String
-  refreshExpiration String
+  refreshExpiration DateTime
   user              User      @relation(fields: [userId], references: [id])
   userId            String    @unique
   vehicles          Vehicle[]
