@@ -8,6 +8,4 @@ export class CarLocationService {
     private smartCarService: SmartCarService,
     private locationService: LocationService,
   ) {}
-
-  
 }
