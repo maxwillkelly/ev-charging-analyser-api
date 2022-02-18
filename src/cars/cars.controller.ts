@@ -13,18 +13,14 @@ export class CarsController {
     private readonly prismaService: PrismaService,
   ) {}
 
-  @Post('add')
-  async addCar(@Body() command: AddCarDto): Promise<CarDto> {
-    return await this.prismaService.car.create({ data: command });
-  }
+  // @Post('add')
+  // async addCar(@Body() command: AddCarDto): Promise<CarDto> {
+  //   return await this.prismaService..create({ data: command });
+  // }
 
-  @Get(':smartCarAccessToken')
-  async getCars(
-    @Param('smartCarAccessToken') smartCarAccessToken: string,
-  ): Promise<NewCarDto[]> {
-    const vehicles = await this.smartCarService.getVehicles(
-      smartCarAccessToken,
-    );
+  @Get(':userId')
+  async getCars(@Param('userId') userId: string): Promise<NewCarDto[]> {
+    const vehicles = await this.smartCarService.getVehicles(userId);
 
     const cars = Promise.all(
       vehicles.map(async (v) => {

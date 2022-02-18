@@ -25,7 +25,7 @@ model User {
 model SmartCarUser {
   id                String
   accessToken       String
-  accessExpiration  DateTime
+  expiration        DateTime
   refreshToken      String
   refreshExpiration DateTime
   user              User      @relation(fields: [userId], references: [id])

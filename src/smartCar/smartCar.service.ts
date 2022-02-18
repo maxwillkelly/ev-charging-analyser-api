@@ -36,7 +36,7 @@ export class SmartCarService {
     });
   }
 
-  getAuthUrl(): string {
+  getAuthUrl(userId: string): string {
     const scope = [
       'required:read_battery',
       'required:read_charge',
@@ -48,11 +48,26 @@ export class SmartCarService {
       'required:read_vehicle_info',
       // 'required:read_vin',
     ];
-    return this.client.getAuthUrl(scope);
+    const options = { state: JSON.stringify({ userId }) };
+    return this.client.getAuthUrl(scope, options);
   }
 
-  async exchangeAsync(code: string): Promise<Access> {
-    return await this.client.exchangeCode(code);
+  async exchangeAsync(code: string, userId: string): Promise<boolean> {
+    const smartCarAccess = await this.client.exchangeCode(code);
+
+    const smartCarUserId = await this.getUser(smartCarAccess.accessToken).then(
+      (u) => u.id,
+    );
+
+    this.prismaService.smartCarUser.create({
+      data: {
+        ...smartCarAccess,
+        id: smartCarUserId,
+        userId,
+      },
+    });
+
+    return true;
   }
 
   async getAccessTokenAsync(userId: string): Promise<string> {
@@ -65,7 +80,7 @@ export class SmartCarService {
       })
       .then((u) => u.smartCarUser);
 
-    if (isPast(smartCarUser.accessExpiration)) {
+    if (isPast(smartCarUser.expiration)) {
       const data = await this.client.exchangeRefreshToken(
         smartCarUser.refreshToken,
       );
@@ -79,11 +94,12 @@ export class SmartCarService {
     return smartCarUser.accessToken;
   }
 
-  async getVehicles(smartCarAccessToken: string): Promise<Vehicle[]> {
-    const vehicleResponse = await SmartCar.getVehicles(smartCarAccessToken);
+  async getVehicles(userId: string): Promise<Vehicle[]> {
+    const accessToken = await this.getAccessTokenAsync(userId);
+    const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
     const vehicles = vehicleIds.map(
-      (v) => new SmartCar.Vehicle(v, smartCarAccessToken),
+      (v) => new SmartCar.Vehicle(v, accessToken),
     );
 
     return vehicles;
@@ -137,8 +153,8 @@ export class SmartCarService {
     return await vehicle.unlock();
   }
 
-  async getUser(): Promise<SmartCarAPIUserDto> {
-    const user = await this.getUser();
+  async getUser(smartCarAccessToken: string): Promise<SmartCarAPIUserDto> {
+    const user = await SmartCar.getUser(smartCarAccessToken);
     return user;
   }
 }

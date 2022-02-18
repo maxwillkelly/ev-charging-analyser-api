@@ -1,7 +1,6 @@
 import { Controller, Get, ParseUUIDPipe, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { SmartCarService } from './smartCar.service';
-import { Access } from 'smartcar';
 import { AttributesDto } from './dtos/attributes';
 
 @Controller('smartCar')
@@ -9,8 +8,8 @@ export class SmartCarController {
   constructor(private readonly smartCarService: SmartCarService) {}
 
   @Get('login')
-  login(@Res() response: Response) {
-    const link = this.smartCarService.getAuthUrl();
+  login(@Res() response: Response, @Query('userId') userId: string) {
+    const link = this.smartCarService.getAuthUrl(userId);
     response.redirect(link);
   }
 
@@ -18,10 +17,12 @@ export class SmartCarController {
   async exchange(
     @Query('code') code: string,
     @Query('error') error: string,
-  ): Promise<Access | Error> {
+    @Query('userId') userId: string,
+    // @Query('accessToken') accessToken: string,
+  ): Promise<boolean | Error> {
     if (error) return new Error(error);
 
-    return await this.smartCarService.exchangeAsync(code);
+    return await this.smartCarService.exchangeAsync(code, userId);
   }
 
   @Get('vehicle')
