@@ -59,12 +59,16 @@ export class SmartCarService {
       (u) => u.id,
     );
 
-    this.prismaService.smartCarUser.create({
-      data: {
+    await this.prismaService.smartCarUser.upsert({
+      where: {
+        id_userId: { id: smartCarUserId, userId },
+      },
+      create: {
         ...smartCarAccess,
         id: smartCarUserId,
         userId,
       },
+      update: { ...smartCarAccess },
     });
 
     return true;

@@ -2,6 +2,7 @@ import { Controller, Get, ParseUUIDPipe, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { SmartCarService } from './smartCar.service';
 import { AttributesDto } from './dtos/attributes';
+import { ExchangeStateDto } from './dtos/exchangeState.dto';
 
 @Controller('smartCar')
 export class SmartCarController {
@@ -17,12 +18,14 @@ export class SmartCarController {
   async exchange(
     @Query('code') code: string,
     @Query('error') error: string,
-    @Query('userId') userId: string,
+    @Query('state') state: string,
     // @Query('accessToken') accessToken: string,
   ): Promise<boolean | Error> {
     if (error) return new Error(error);
 
-    return await this.smartCarService.exchangeAsync(code, userId);
+    const stateObj: ExchangeStateDto = JSON.parse(state);
+
+    return await this.smartCarService.exchangeAsync(code, stateObj.userId);
   }
 
   @Get('vehicle')
