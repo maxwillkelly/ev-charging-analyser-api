@@ -53,9 +53,9 @@ export class SmartCarService {
   }
 
   async exchangeAsync(code: string, userId: string): Promise<boolean> {
-    const smartCarAccess = await this.client.exchangeCode(code);
+    const access = await this.client.exchangeCode(code);
 
-    const smartCarUserId = await this.getUser(smartCarAccess.accessToken).then(
+    const smartCarUserId = await this.getUserAsync(access.accessToken).then(
       (u) => u.id,
     );
 
@@ -64,11 +64,11 @@ export class SmartCarService {
         id_userId: { id: smartCarUserId, userId },
       },
       create: {
-        ...smartCarAccess,
+        ...access,
         id: smartCarUserId,
         userId,
       },
-      update: { ...smartCarAccess },
+      update: { ...access },
     });
 
     return true;
@@ -98,7 +98,7 @@ export class SmartCarService {
     return smartCarUser.accessToken;
   }
 
-  async getVehicles(userId: string): Promise<Vehicle[]> {
+  async getVehiclesAsync(userId: string): Promise<Vehicle[]> {
     const accessToken = await this.getAccessTokenAsync(userId);
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
@@ -109,7 +109,7 @@ export class SmartCarService {
     return vehicles;
   }
 
-  async getVehiclesAttributes(
+  async getVehiclesAttributesAsync(
     vehicles: SmartCar.Vehicle[],
   ): Promise<Attributes[]> {
     const vehiclesAttributes = await Promise.all(
@@ -118,46 +118,48 @@ export class SmartCarService {
     return vehiclesAttributes;
   }
 
-  async getVehicle(smartCarAccessToken: string): Promise<Vehicle> {
-    const vehicles = await SmartCar.getVehicles(smartCarAccessToken);
-
-    // instantiate first vehicle in vehicle list
-    const vehicle = new SmartCar.Vehicle(
-      vehicles.vehicles[0],
-      smartCarAccessToken,
-    );
-
-    return vehicle;
+  async getVehicleAsync(userId: string, vehicleId: string): Promise<Vehicle> {
+    const accessToken = await this.getAccessTokenAsync(userId);
+    return new SmartCar.Vehicle(vehicleId, accessToken);
   }
 
-  async getVehicleAttributes(smartCarAccessToken: string): Promise<Attributes> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
+  async getVehicleAttributesAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<Attributes> {
+    const vehicle = await this.getVehicleAsync(userId, vehicleId);
     return vehicle.attributes();
   }
 
-  async getBatteryLevels(vehicles: Vehicle[]): Promise<Battery[]> {
+  async getBatteryLevelsAsync(vehicles: Vehicle[]): Promise<Battery[]> {
     const batteryLevels = await Promise.all(
       vehicles.map(async (v) => await v.battery()),
     );
     return batteryLevels;
   }
 
-  async getLocation(smartCarAccessToken: string): Promise<Location> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
+  async getLocationAsync(userId: string, vehicleId: string): Promise<Location> {
+    const vehicle = await this.getVehicleAsync(userId, vehicleId);
     return await vehicle.location();
   }
 
-  async lockCar(smartCarAccessToken: string): Promise<ActionResponse> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
+  async lockCarAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<ActionResponse> {
+    const vehicle = await this.getVehicleAsync(userId, vehicleId);
     return await vehicle.lock();
   }
 
-  async unlockCar(smartCarAccessToken: string): Promise<ActionResponse> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
+  async unlockCarAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<ActionResponse> {
+    const vehicle = await this.getVehicleAsync(userId, vehicleId);
     return await vehicle.unlock();
   }
 
-  async getUser(smartCarAccessToken: string): Promise<SmartCarAPIUserDto> {
+  async getUserAsync(smartCarAccessToken: string): Promise<SmartCarAPIUserDto> {
     const user = await SmartCar.getUser(smartCarAccessToken);
     return user;
   }

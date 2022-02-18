@@ -30,8 +30,12 @@ export class SmartCarController {
 
   @Get('vehicle')
   async getVehicleAttributes(
-    @Query('smartCarAccessToken', ParseUUIDPipe) smartCarAccessToken: string,
+    @Query('userId', ParseUUIDPipe) userId: string,
+    @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
   ): Promise<AttributesDto> {
-    return this.smartCarService.getVehicleAttributes(smartCarAccessToken);
+    return await this.smartCarService.getVehicleAttributesAsync(
+      userId,
+      vehicleId,
+    );
   }
 }

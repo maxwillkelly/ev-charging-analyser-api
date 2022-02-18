@@ -1,9 +1,17 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ActionResponseDto } from 'src/smartCar/dtos/actionResponse.dto';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarActionDto } from './dtos/carAction.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddCarDto, CarDto, NewCarDto } from './dtos/addCar.dto';
+import { CarDto } from './dtos/addCar.dto';
 import { Location } from 'smartcar';
 
 @Controller('cars')
@@ -13,14 +21,11 @@ export class CarsController {
     private readonly prismaService: PrismaService,
   ) {}
 
-  // @Post('add')
-  // async addCar(@Body() command: AddCarDto): Promise<CarDto> {
-  //   return await this.prismaService..create({ data: command });
-  // }
-
-  @Get(':userId')
-  async getCars(@Param('userId') userId: string): Promise<NewCarDto[]> {
-    const vehicles = await this.smartCarService.getVehicles(userId);
+  @Get()
+  async getCars(
+    @Query('userId', ParseUUIDPipe) userId: string,
+  ): Promise<CarDto[]> {
+    const vehicles = await this.smartCarService.getVehiclesAsync(userId);
 
     const cars = Promise.all(
       vehicles.map(async (v) => {
@@ -37,12 +42,14 @@ export class CarsController {
     return cars;
   }
 
-  @Get('location/:smartCarAccessToken')
+  @Get('location')
   async getLocation(
-    @Param('smartCarAccessToken') smartCarAccessToken: string,
+    @Query('userId', ParseUUIDPipe) userId: string,
+    @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
   ): Promise<Location> {
-    const response = await this.smartCarService.getLocation(
-      smartCarAccessToken,
+    const response = await this.smartCarService.getLocationAsync(
+      userId,
+      vehicleId,
     );
 
     return response;
@@ -50,17 +57,13 @@ export class CarsController {
 
   @Post('lock')
   async lockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
-    const response = this.smartCarService.lockCar(command.smartCarAccessToken);
-
-    return response;
+    const { userId, vehicleId } = command;
+    return await this.smartCarService.lockCarAsync(userId, vehicleId);
   }
 
   @Post('unlock')
   async unlockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
-    const response = this.smartCarService.unlockCar(
-      command.smartCarAccessToken,
-    );
-
-    return response;
+    const { userId, vehicleId } = command;
+    return this.smartCarService.unlockCarAsync(userId, vehicleId);
   }
 }
