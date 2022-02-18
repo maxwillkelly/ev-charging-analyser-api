@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   ParseUUIDPipe,
   Post,
   Query,
@@ -10,16 +9,12 @@ import {
 import { ActionResponseDto } from 'src/smartCar/dtos/actionResponse.dto';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarActionDto } from './dtos/carAction.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CarDto } from './dtos/addCar.dto';
 import { Location } from 'smartcar';
 
 @Controller('cars')
 export class CarsController {
-  constructor(
-    private readonly smartCarService: SmartCarService,
-    private readonly prismaService: PrismaService,
-  ) {}
+  constructor(private readonly smartCarService: SmartCarService) {}
 
   @Get()
   async getCars(
@@ -47,12 +42,7 @@ export class CarsController {
     @Query('userId', ParseUUIDPipe) userId: string,
     @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
   ): Promise<Location> {
-    const response = await this.smartCarService.getLocationAsync(
-      userId,
-      vehicleId,
-    );
-
-    return response;
+    return await this.smartCarService.getLocationAsync(userId, vehicleId);
   }
 
   @Post('lock')
