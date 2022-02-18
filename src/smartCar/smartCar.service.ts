@@ -92,8 +92,27 @@ export class SmartCarService {
     const accessToken = await this.getAccessTokenAsync(userId);
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
+
+    const smartCarUserId: string = await this.prismaService.smartCarUser
+      .findUnique({
+        where: { userId },
+        select: {
+          id: true,
+        },
+      })
+      .then((u) => u.id);
+
+    const createManyData = vehicleIds.map((id) => {
+      return { id, smartCarUserId, userId };
+    });
+
+    await this.prismaService.vehicle.createMany({
+      data: createManyData,
+      skipDuplicates: true,
+    });
+
     const vehicles = vehicleIds.map(
-      (v) => new SmartCar.Vehicle(v, accessToken),
+      (id) => new SmartCar.Vehicle(id, accessToken),
     );
 
     return vehicles;
