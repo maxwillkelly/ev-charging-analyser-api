@@ -7,13 +7,13 @@ import { SmartCarController } from './smartCar/smartCar.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
 import { CarsController } from './cars/cars.controller';
 import { CassandraService } from './cassandra/cassandra.service';
 import { LocationController } from './location/location.controller';
 import { LocationService } from './location/location.service';
 import { CarLocationService } from './car-location/car-location.service';
+import { CarsService } from './cars/cars.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -51,10 +51,10 @@ const validationSchema = Joi.object({
   providers: [
     SmartCarService,
     PrismaService,
-    UsersService,
     CassandraService,
     LocationService,
     CarLocationService,
+    CarsService,
   ],
 })
 export class AppModule {}

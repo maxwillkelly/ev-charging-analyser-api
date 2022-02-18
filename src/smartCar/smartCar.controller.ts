@@ -1,16 +1,15 @@
-import { Controller, Get, ParseUUIDPipe, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { SmartCarService } from './smartCar.service';
-import { Access } from 'smartcar';
-import { AttributesDto } from './dtos/attributes';
+import { ExchangeStateDto } from './dtos/exchangeState.dto';
 
 @Controller('smartCar')
 export class SmartCarController {
   constructor(private readonly smartCarService: SmartCarService) {}
 
   @Get('login')
-  login(@Res() response: Response) {
-    const link = this.smartCarService.getAuthUrl();
+  login(@Res() response: Response, @Query('userId') userId: string) {
+    const link = this.smartCarService.getAuthUrl(userId);
     response.redirect(link);
   }
 
@@ -18,16 +17,12 @@ export class SmartCarController {
   async exchange(
     @Query('code') code: string,
     @Query('error') error: string,
-  ): Promise<Access | Error> {
+    @Query('state') state: string,
+  ): Promise<boolean | Error> {
     if (error) return new Error(error);
 
-    return this.smartCarService.exchange(code);
-  }
+    const stateObj: ExchangeStateDto = JSON.parse(state);
 
-  @Get('vehicle')
-  async getVehicleAttributes(
-    @Query('smartCarAccessToken', ParseUUIDPipe) smartCarAccessToken: string,
-  ): Promise<AttributesDto> {
-    return this.smartCarService.getVehicleAttributes(smartCarAccessToken);
+    return await this.smartCarService.exchangeAsync(code, stateObj.userId);
   }
 }

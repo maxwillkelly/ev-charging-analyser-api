@@ -25,7 +25,7 @@ export class UsersController {
   }
 
   @Post('register')
-  async addUser(@Body() command: RegisterDto): Promise<LoginResponse> {
+  async register(@Body() command: RegisterDto): Promise<LoginResponse> {
     const { firstName, lastName, email, password } = command;
     const hashedPassword = await hash(password, 10);
 

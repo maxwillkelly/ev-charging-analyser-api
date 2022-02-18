@@ -1,9 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class CarActionDto {
+export class ExchangeStateDto {
   @IsUUID()
   userId: string;
-
-  @IsUUID()
-  vehicleId: string;
 }

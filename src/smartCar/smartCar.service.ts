@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import SmartCar, {
-  Access,
-  ActionResponse,
-  Attributes,
-  AuthClient,
-  Battery,
-  Location,
-  Vehicle,
-} from 'smartcar';
-
+import { SmartCarUser } from '@prisma/client';
+import { isPast } from 'date-fns';
+import SmartCar, { AuthClient, Vehicle } from 'smartcar';
+import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SmartCarService {
   private readonly client: AuthClient = null;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prismaService: PrismaService,
+  ) {
     const clientId = this.configService.get<string>('SMARTCAR_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'SMARTCAR_CLIENT_SECRET',
@@ -29,7 +26,7 @@ export class SmartCarService {
     });
   }
 
-  getAuthUrl(): string {
+  getAuthUrl(userId: string): string {
     const scope = [
       'required:read_battery',
       'required:read_charge',
@@ -41,68 +38,69 @@ export class SmartCarService {
       'required:read_vehicle_info',
       // 'required:read_vin',
     ];
-    return this.client.getAuthUrl(scope);
+    const options = { state: JSON.stringify({ userId }) };
+    return this.client.getAuthUrl(scope, options);
   }
 
-  exchange(code: string): Access {
-    return this.client.exchangeCode(code);
+  async exchangeAsync(code: string, userId: string): Promise<boolean> {
+    const access = await this.client.exchangeCode(code);
+
+    const smartCarUserId = await SmartCar.getUser(access.accessToken).then(
+      (u) => u.id,
+    );
+
+    await this.prismaService.smartCarUser.upsert({
+      where: {
+        id_userId: { id: smartCarUserId, userId },
+      },
+      create: {
+        ...access,
+        id: smartCarUserId,
+        userId,
+      },
+      update: { ...access },
+    });
+
+    return true;
   }
 
-  async getVehicles(smartCarAccessToken: string): Promise<Vehicle[]> {
-    const vehicleResponse = await SmartCar.getVehicles(smartCarAccessToken);
+  async getAccessTokenAsync(userId: string): Promise<string> {
+    let smartCarUser: SmartCarUser = await this.prismaService.user
+      .findUnique({
+        where: { id: userId },
+        select: {
+          smartCarUser: true,
+        },
+      })
+      .then((u) => u.smartCarUser);
+
+    if (isPast(smartCarUser.expiration)) {
+      const data = await this.client.exchangeRefreshToken(
+        smartCarUser.refreshToken,
+      );
+
+      smartCarUser = await this.prismaService.smartCarUser.update({
+        where: { userId },
+        data,
+      });
+    }
+
+    return smartCarUser.accessToken;
+  }
+
+  async getVehiclesAsync(userId: string): Promise<Vehicle[]> {
+    const accessToken = await this.getAccessTokenAsync(userId);
+    const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
     const vehicles = vehicleIds.map(
-      (v) => new SmartCar.Vehicle(v, smartCarAccessToken),
+      (v) => new SmartCar.Vehicle(v, accessToken),
     );
 
     return vehicles;
   }
 
-  async getVehiclesAttributes(
-    vehicles: SmartCar.Vehicle[],
-  ): Promise<Attributes[]> {
-    const vehiclesAttributes = await Promise.all(
-      vehicles.map(async (v) => await v.attributes()),
-    );
-    return vehiclesAttributes;
-  }
-
-  async getVehicle(smartCarAccessToken: string): Promise<Vehicle> {
-    const vehicles = await SmartCar.getVehicles(smartCarAccessToken);
-
-    // instantiate first vehicle in vehicle list
-    const vehicle = new SmartCar.Vehicle(
-      vehicles.vehicles[0],
-      smartCarAccessToken,
-    );
-
-    return vehicle;
-  }
-
-  async getVehicleAttributes(smartCarAccessToken: string): Promise<Attributes> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
-    return vehicle.attributes();
-  }
-
-  async getBatteryLevels(vehicles: Vehicle[]): Promise<Battery[]> {
-    const batteryLevels = await Promise.all(
-      vehicles.map(async (v) => await v.battery()),
-    );
-    return batteryLevels;
-  }
-
-  async getLocation(smartCarAccessToken: string): Promise<Location> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
-    return await vehicle.location();
-  }
-
-  async lockCar(smartCarAccessToken: string): Promise<ActionResponse> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
-    return await vehicle.lock();
-  }
-
-  async unlockCar(smartCarAccessToken: string): Promise<ActionResponse> {
-    const vehicle = await this.getVehicle(smartCarAccessToken);
-    return await vehicle.unlock();
+  async getVehicleAsync(userId: string, vehicleId: string): Promise<Vehicle> {
+    const accessToken = await this.getAccessTokenAsync(userId);
+    return new SmartCar.Vehicle(vehicleId, accessToken);
   }
 }
