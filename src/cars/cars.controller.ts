@@ -7,34 +7,20 @@ import {
   Query,
 } from '@nestjs/common';
 import { ActionResponseDto } from 'src/smartCar/dtos/actionResponse.dto';
-import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarActionDto } from './dtos/carAction.dto';
 import { CarDto } from './dtos/addCar.dto';
 import { Location } from 'smartcar';
+import { CarsService } from './cars.service';
 
 @Controller('cars')
 export class CarsController {
-  constructor(private readonly smartCarService: SmartCarService) {}
+  constructor(private readonly carsService: CarsService) {}
 
   @Get()
   async getCars(
     @Query('userId', ParseUUIDPipe) userId: string,
   ): Promise<CarDto[]> {
-    const vehicles = await this.smartCarService.getVehiclesAsync(userId);
-
-    const cars = Promise.all(
-      vehicles.map(async (v) => {
-        const attributes = await v.attributes();
-        const batteryLevel = await v.battery();
-
-        const { make, model, year } = attributes;
-        const name = `${year} ${make} ${model}`;
-
-        return { ...attributes, ...batteryLevel, name };
-      }),
-    );
-
-    return cars;
+    return await this.carsService.getCarsAsync(userId);
   }
 
   @Get('location')
@@ -42,18 +28,18 @@ export class CarsController {
     @Query('userId', ParseUUIDPipe) userId: string,
     @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
   ): Promise<Location> {
-    return await this.smartCarService.getLocationAsync(userId, vehicleId);
+    return await this.carsService.getLocationAsync(userId, vehicleId);
   }
 
   @Post('lock')
   async lockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
     const { userId, vehicleId } = command;
-    return await this.smartCarService.lockCarAsync(userId, vehicleId);
+    return await this.carsService.lockCarAsync(userId, vehicleId);
   }
 
   @Post('unlock')
   async unlockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
     const { userId, vehicleId } = command;
-    return this.smartCarService.unlockCarAsync(userId, vehicleId);
+    return this.carsService.unlockCarAsync(userId, vehicleId);
   }
 }
