@@ -18,6 +18,7 @@ async function bootstrap() {
     .setTitle('ev-charging-analyser-server')
     .setDescription('API for Analysing EV Charging Habits')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -26,5 +27,4 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-// console.log(process.env);
 bootstrap();
