@@ -1,4 +1,4 @@
-import { IsDateString, IsNumber, IsUUID } from 'class-validator';
+import { IsNumber, IsUUID } from 'class-validator';
 
 export class RecordCarLocation {
   @IsUUID()
@@ -9,7 +9,4 @@ export class RecordCarLocation {
 
   @IsNumber()
   longitude: number;
-
-  @IsDateString()
-  recordedAt: string;
 }

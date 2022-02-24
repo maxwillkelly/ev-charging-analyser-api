@@ -21,27 +21,27 @@ export class LocationController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getLocations() {
-    return this.locationService.getLocations();
+    return await this.locationService.getLocationsAsync();
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getLocation(@Query('id', ParseUUIDPipe) id: string) {
-    return this.locationService.getLocationById(id);
+    return await this.locationService.getLocationByIdAsync(id);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('car')
   async recordCarLocation(@Body() dto: RecordCarLocation) {
-    return this.locationService.recordCarLocation(dto);
+    return await this.locationService.recordCarLocationAsync(dto);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('user')
   async recordUserLocation(@Body() dto: RecordUserLocation) {
-    return this.locationService.recordUserLocation(dto);
+    return await this.locationService.recordUserLocationAsync(dto);
   }
 }
