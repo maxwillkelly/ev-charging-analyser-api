@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ActionResponse, Location, Meta, WebhookSubscription } from 'smartcar';
+import { ActionResponse, Location } from 'smartcar';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/addCar.dto';
@@ -8,7 +7,6 @@ import { CarDto } from './dtos/addCar.dto';
 @Injectable()
 export class CarsService {
   constructor(
-    private readonly configService: ConfigService,
     private readonly smartCarService: SmartCarService,
     private readonly locationService: LocationService,
   ) {}
@@ -45,40 +43,6 @@ export class CarsService {
     });
 
     return location;
-  }
-
-  private async subscribeAsync(
-    userId: string,
-    vehicleId: string,
-    webhookId: string,
-  ): Promise<WebhookSubscription> {
-    const vehicle = await this.smartCarService.getVehicleAsync(
-      userId,
-      vehicleId,
-    );
-
-    return await vehicle.subscribe(webhookId);
-  }
-
-  // private async unsubscribeAsync(
-  //   userId: string,
-  //   vehicleId: string,
-  //   webhookId: string,
-  // ): Promise<Meta> {
-  //   const vehicle = await this.smartCarService.getVehicleAsync(
-  //     userId,
-  //     vehicleId,
-  //   );
-
-  //   return await vehicle.unsubscribe(webhookId);
-  // }
-
-  async subscribeLocationAsync(userId: string, vehicleId: string) {
-    const webhookId = this.configService.get<string>(
-      'SMARTCAR_CAR_LOCATION_WEBHOOK_ID',
-    );
-
-    return await this.subscribeAsync(userId, vehicleId, webhookId);
   }
 
   async lockCarAsync(

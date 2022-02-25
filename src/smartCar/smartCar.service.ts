@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SmartCarUser } from '@prisma/client';
+import { Prisma, SmartCarUser } from '@prisma/client';
 import { isPast } from 'date-fns';
-import SmartCar, { AuthClient, Vehicle } from 'smartcar';
+import SmartCar, { AuthClient, Vehicle, WebhookSubscription } from 'smartcar';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SmartCarService {
@@ -93,6 +93,21 @@ export class SmartCarService {
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
 
+    await this.storeVehiclesAsync(userId, vehicleIds);
+
+    const vehicles = vehicleIds.map(
+      (id) => new SmartCar.Vehicle(id, accessToken),
+    );
+
+    await this.subscribeVehiclesAsync(vehicles);
+
+    return vehicles;
+  }
+
+  async storeVehiclesAsync(
+    userId: string,
+    vehicleIds: string[],
+  ): Promise<Prisma.BatchPayload> {
     const smartCarUserId: string = await this.prismaService.smartCarUser
       .findUnique({
         where: { userId },
@@ -106,20 +121,30 @@ export class SmartCarService {
       return { id, smartCarUserId, userId };
     });
 
-    await this.prismaService.vehicle.createMany({
+    return await this.prismaService.vehicle.createMany({
       data: createManyData,
       skipDuplicates: true,
     });
-
-    const vehicles = vehicleIds.map(
-      (id) => new SmartCar.Vehicle(id, accessToken),
-    );
-
-    return vehicles;
   }
 
   async getVehicleAsync(userId: string, vehicleId: string): Promise<Vehicle> {
     const accessToken = await this.getAccessTokenAsync(userId);
     return new SmartCar.Vehicle(vehicleId, accessToken);
+  }
+
+  async subscribeVehiclesAsync(
+    vehicles: Vehicle[],
+  ): Promise<WebhookSubscription[]> {
+    const webhookId = this.configService.get<string>(
+      'SMARTCAR_CAR_LOCATION_WEBHOOK_ID',
+    );
+
+    const subscriptions = await Promise.all(
+      vehicles.map(async (vehicle) => await vehicle.subscribe(webhookId)),
+    );
+
+    console.log(subscriptions);
+
+    return subscriptions;
   }
 }
