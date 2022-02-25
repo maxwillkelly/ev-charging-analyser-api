@@ -34,7 +34,8 @@ export class LocationController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('car')
-  async recordCarLocation(@Body() dto: RecordCarLocation) {
+  async recordCarLocation(@Body() dto) {
+    console.log(dto);
     return await this.locationService.recordCarLocationAsync(dto);
   }
 

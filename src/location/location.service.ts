@@ -63,10 +63,14 @@ export class LocationService implements OnModuleInit {
   async recordCarLocationAsync(
     location: RecordCarLocation,
   ): Promise<Location[]> {
+    const { id, latitude, longitude } = location;
+
     return (
       await this.locationMapper.insert({
         id: uuid(),
-        ...location,
+        carId: id,
+        latitude,
+        longitude,
         recordedAt: new Date(),
       })
     ).toArray();
