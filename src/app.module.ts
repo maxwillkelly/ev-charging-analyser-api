@@ -12,23 +12,24 @@ import { CarsController } from './cars/cars.controller';
 import { CassandraService } from './cassandra/cassandra.service';
 import { LocationController } from './location/location.controller';
 import { LocationService } from './location/location.service';
-import { CarLocationService } from './car-location/car-location.service';
 import { CarsService } from './cars/cars.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
-  SMARTCAR_CLIENT_ID: Joi.string().uuid(),
-  SMARTCAR_CLIENT_SECRET: Joi.string().uuid(),
-  SMARTCAR_REDIRECT_URI: Joi.string().uri(),
-  CASSANDRA_CONTACT_POINT: Joi.string(),
-  CASSANDRA_LOCAL_DATA_CENTER: Joi.string(),
-  CASSANDRA_KEYSPACE: Joi.string(),
-  CASSANDRA_USER: Joi.string(),
-  CASSANDRA_PASSWORD: Joi.string(),
-  POSTGRES_DB: Joi.string(),
-  POSTGRES_USER: Joi.string(),
-  POSTGRES_PASSWORD: Joi.string(),
-  POSTGRES_PRISMA_URL: Joi.string(),
+  API_ENV: Joi.string().valid('local', 'development', 'production').required(),
+  SMARTCAR_CLIENT_ID: Joi.string().uuid().required(),
+  SMARTCAR_CLIENT_SECRET: Joi.string().uuid().required(),
+  SMARTCAR_REDIRECT_URI: Joi.string().uri().required(),
+  SMARTCAR_CAR_LOCATION_WEBHOOK_ID: Joi.string().uuid().required(),
+  CASSANDRA_CONTACT_POINT: Joi.string().required(),
+  CASSANDRA_LOCAL_DATA_CENTER: Joi.string().required(),
+  CASSANDRA_KEYSPACE: Joi.string().required(),
+  CASSANDRA_USER: Joi.string().required(),
+  CASSANDRA_PASSWORD: Joi.string().required(),
+  POSTGRES_DB: Joi.string().required(),
+  POSTGRES_USER: Joi.string().required(),
+  POSTGRES_PASSWORD: Joi.string().required(),
+  POSTGRES_PRISMA_URL: Joi.string().required(),
 });
 
 @Global()
@@ -53,7 +54,6 @@ const validationSchema = Joi.object({
     PrismaService,
     CassandraService,
     LocationService,
-    CarLocationService,
     CarsService,
   ],
 })

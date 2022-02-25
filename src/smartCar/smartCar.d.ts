@@ -358,7 +358,7 @@ declare module 'smartcar' {
      * Subscribe the vehicle to given webhook Id
      * @param webhookId - Webhook Id to subscribe to.
      */
-    async subscribe(webhookId: string): Promise<any>;
+    async subscribe(webhookId: string): Promise<WebhookSubscription>;
     /**
      * Unsubscribe  the vehicle from given webhook Id
      * @param amt - Application management token to be used as authorization
