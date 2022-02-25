@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { RecordCarLocation } from './dtos/recordCarLocation.dto';
+// import { RecordCarLocation } from './dtos/recordCarLocation.dto';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
 import { LocationService } from './location.service';
 
