@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ActionResponse, Location } from 'smartcar';
+import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/addCar.dto';
 
 @Injectable()
 export class CarsService {
-  constructor(private readonly smartCarService: SmartCarService) {}
+  constructor(
+    private readonly smartCarService: SmartCarService,
+    private readonly locationService: LocationService,
+  ) {}
 
   async getCarsAsync(userId: string): Promise<CarDto[]> {
     const vehicles = await this.smartCarService.getVehiclesAsync(userId);
@@ -30,7 +34,15 @@ export class CarsService {
       userId,
       vehicleId,
     );
-    return await vehicle.location();
+
+    const location = await vehicle.location();
+
+    await this.locationService.recordCarLocationAsync({
+      carId: vehicleId,
+      ...location,
+    });
+
+    return location;
   }
 
   async lockCarAsync(

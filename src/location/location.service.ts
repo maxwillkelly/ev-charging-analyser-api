@@ -52,17 +52,27 @@ export class LocationService implements OnModuleInit {
       .forModel('Location');
   }
 
-  async getLocations(): Promise<Location[]> {
+  async getLocationsAsync(): Promise<Location[]> {
     return (await this.locationMapper.findAll()).toArray();
   }
 
-  async getLocationById(id: string): Promise<Location[]> {
+  async getLocationByIdAsync(id: string): Promise<Location[]> {
     return (await this.locationMapper.find({ id })).toArray();
   }
 
-  async recordCarLocation(location: RecordCarLocation): Promise<Location[]> {
+  async recordCarLocationAsync(
+    location: RecordCarLocation,
+  ): Promise<Location[]> {
+    const { id, latitude, longitude } = location;
+
     return (
-      await this.locationMapper.insert({ id: uuid(), ...location })
+      await this.locationMapper.insert({
+        id: uuid(),
+        carId: id,
+        latitude,
+        longitude,
+        recordedAt: new Date(),
+      })
     ).toArray();
   }
 
@@ -71,7 +81,9 @@ export class LocationService implements OnModuleInit {
     return dateObject.toISOString();
   }
 
-  async recordUserLocation(location: RecordUserLocation): Promise<Location[]> {
+  async recordUserLocationAsync(
+    location: RecordUserLocation,
+  ): Promise<Location[]> {
     const { userId, timestamp, coords } = location;
     const {
       latitude,
