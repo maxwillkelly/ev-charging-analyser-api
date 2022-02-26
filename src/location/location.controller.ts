@@ -43,7 +43,9 @@ export class LocationController {
     switch (dto.eventName) {
       case 'verify':
         const data = dto.payload as ChallengePayload;
-        return { code: this.smartCarService.hashChallenge(data.challenge) };
+        return {
+          signature: this.smartCarService.hashChallenge(data.challenge),
+        };
 
       default:
         console.log(dto);
