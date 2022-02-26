@@ -41,7 +41,7 @@ export class LocationController {
   @Post('car')
   async recordCarLocation(@Body() dto: RecordCarLocation) {
     switch (dto.eventName) {
-      case 'challenge':
+      case 'verify':
         const data = dto.payload as ChallengePayload;
         return this.authService.challenge(data.challenge);
 
