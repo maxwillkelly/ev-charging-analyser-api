@@ -20,6 +20,7 @@ const validationSchema = Joi.object({
   API_ENV: Joi.string().valid('local', 'development', 'production').required(),
   SMARTCAR_CLIENT_ID: Joi.string().uuid().required(),
   SMARTCAR_CLIENT_SECRET: Joi.string().uuid().required(),
+  SMARTCAR_MANAGEMENT_API_TOKEN: Joi.string().uuid().required(),
   SMARTCAR_REDIRECT_URI: Joi.string().uri().required(),
   SMARTCAR_CAR_LOCATION_WEBHOOK_ID: Joi.string().uuid().required(),
   CASSANDRA_CONTACT_POINT: Joi.string().required(),
