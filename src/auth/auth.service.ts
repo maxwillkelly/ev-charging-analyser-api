@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { compare } from 'bcryptjs';
@@ -9,8 +10,9 @@ import { LoginResponse } from './dtos/login.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private prismaService: PrismaService,
-    private jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -38,8 +40,10 @@ export class AuthService {
 
   async challenge(challenge: string): Promise<ChallengeDto> {
     return {
-      challenge,
-      amt: this.jwtService.sign({ challenge }),
+      signature: this.jwtService.sign({
+        amt: this.configService.get<string>('JWT_KEY'),
+        challenge,
+      }),
     };
   }
 }

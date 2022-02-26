@@ -1,9 +1,6 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class ChallengeDto {
   @IsString()
-  challenge: string;
-
-  @IsUUID()
-  amt: string;
+  signature: string;
 }
