@@ -149,7 +149,7 @@ export class SmartCarService {
   }
 
   hashChallenge(challenge: string): string {
-    const amt = this.configService.get<string>('JWT_KEY');
+    const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
     return SmartCar.hashChallenge(amt, challenge);
   }
 }

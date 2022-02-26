@@ -37,13 +37,4 @@ export class AuthService {
       token: this.jwtService.sign(payload),
     };
   }
-
-  async challenge(challenge: string): Promise<ChallengeDto> {
-    return {
-      signature: this.jwtService.sign({
-        amt: this.configService.get<string>('JWT_KEY'),
-        challenge,
-      }),
-    };
-  }
 }
