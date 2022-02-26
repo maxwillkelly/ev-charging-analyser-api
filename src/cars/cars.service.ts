@@ -38,7 +38,7 @@ export class CarsService {
     const location = await vehicle.location();
 
     await this.locationService.recordCarLocationAsync({
-      id: vehicleId,
+      vehicleId,
       ...location,
     });
 

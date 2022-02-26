@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { compare } from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ChallengeDto } from './dtos/challenge.dto';
 import { LoginResponse } from './dtos/login.dto';
 
 @Injectable()
@@ -32,6 +33,13 @@ export class AuthService {
     return {
       user,
       token: this.jwtService.sign(payload),
+    };
+  }
+
+  async challenge(challenge: string): Promise<ChallengeDto> {
+    return {
+      challenge,
+      applicationManagementToken: this.jwtService.sign({ challenge }),
     };
   }
 }
