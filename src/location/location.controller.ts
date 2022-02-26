@@ -8,14 +8,21 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-// import { RecordCarLocation } from './dtos/recordCarLocation.dto';
+import {
+  ChallengePayload,
+  RecordCarLocation,
+} from './dtos/recordCarLocation.dto';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
 import { LocationService } from './location.service';
 
 @Controller('location')
 export class LocationController {
-  constructor(private locationService: LocationService) {}
+  constructor(
+    private readonly locationService: LocationService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -31,12 +38,18 @@ export class LocationController {
     return await this.locationService.getLocationByIdAsync(id);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
   @Post('car')
-  async recordCarLocation(@Body() dto) {
-    console.log(dto);
-    return await this.locationService.recordCarLocationAsync(dto);
+  async recordCarLocation(@Body() dto: RecordCarLocation) {
+    switch (dto.eventName) {
+      case 'challenge':
+        const data = dto.payload as ChallengePayload;
+        return this.authService.challenge(data.challenge);
+
+      default:
+        console.log(dto);
+    }
+
+    return null;
   }
 
   @ApiBearerAuth()

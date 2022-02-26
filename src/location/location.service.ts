@@ -3,14 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { v4 as uuid } from 'uuid';
 import { CassandraService } from 'src/cassandra/cassandra.service';
-import { RecordCarLocation } from './dtos/recordCarLocation.dto';
+import { CarLocation } from './dtos/recordCarLocation.dto';
 import { Location } from './location.model';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class LocationService implements OnModuleInit {
   constructor(
-    private cassandraService: CassandraService,
-    private configService: ConfigService,
+    private readonly cassandraService: CassandraService,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
   ) {}
 
   locationMapper: mapping.ModelMapper<Location>;
@@ -60,15 +62,13 @@ export class LocationService implements OnModuleInit {
     return (await this.locationMapper.find({ id })).toArray();
   }
 
-  async recordCarLocationAsync(
-    location: RecordCarLocation,
-  ): Promise<Location[]> {
-    const { id, latitude, longitude } = location;
+  async recordCarLocationAsync(location: CarLocation): Promise<Location[]> {
+    const { vehicleId, latitude, longitude } = location;
 
     return (
       await this.locationMapper.insert({
         id: uuid(),
-        carId: id,
+        carId: vehicleId,
         latitude,
         longitude,
         recordedAt: new Date(),
