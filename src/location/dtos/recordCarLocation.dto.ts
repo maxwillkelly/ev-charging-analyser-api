@@ -2,12 +2,13 @@ import {
   IsIn,
   IsNumber,
   IsNumberString,
+  IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
 
+export type SmartCarMode = 'test' | 'live';
 export class RecordCarLocation {
   @IsNumberString()
   version: string;
@@ -17,6 +18,10 @@ export class RecordCarLocation {
 
   @IsString()
   eventName: string;
+
+  @IsOptional()
+  @IsIn(['test', 'live'])
+  mode?: SmartCarMode;
 
   @ValidateNested()
   payload?: CarLocation | ChallengePayload;

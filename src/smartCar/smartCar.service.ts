@@ -147,4 +147,9 @@ export class SmartCarService {
 
     return subscriptions;
   }
+
+  hashChallenge(challenge: string): string {
+    const amt = this.configService.get<string>('JWT_KEY');
+    return SmartCar.hashChallenge(amt, challenge);
+  }
 }
