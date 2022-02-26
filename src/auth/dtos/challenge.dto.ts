@@ -5,5 +5,5 @@ export class ChallengeDto {
   challenge: string;
 
   @IsUUID()
-  applicationManagementToken: string;
+  amt: string;
 }

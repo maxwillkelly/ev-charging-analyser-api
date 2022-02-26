@@ -39,7 +39,7 @@ export class AuthService {
   async challenge(challenge: string): Promise<ChallengeDto> {
     return {
       challenge,
-      applicationManagementToken: this.jwtService.sign({ challenge }),
+      amt: this.jwtService.sign({ challenge }),
     };
   }
 }
