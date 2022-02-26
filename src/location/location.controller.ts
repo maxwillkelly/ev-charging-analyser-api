@@ -8,8 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { SmartCarService } from 'src/smartCar/smartCar.service';
 import {
   ChallengePayload,
   RecordCarLocation,
@@ -21,7 +21,7 @@ import { LocationService } from './location.service';
 export class LocationController {
   constructor(
     private readonly locationService: LocationService,
-    private readonly authService: AuthService,
+    private readonly smartCarService: SmartCarService,
   ) {}
 
   @ApiBearerAuth()
@@ -43,7 +43,7 @@ export class LocationController {
     switch (dto.eventName) {
       case 'verify':
         const data = dto.payload as ChallengePayload;
-        return this.authService.challenge(data.challenge);
+        return this.smartCarService.hashChallenge(data.challenge);
 
       default:
         console.log(dto);
