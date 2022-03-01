@@ -176,7 +176,7 @@ export class SmartCarService {
     );
     console.log(`Payload Hash: ${payloadHash}`);
 
-    return payloadHash;
+    return dtoHash;
   }
 
   // verifyPayload(challenge: string, body: RecordCarLocation): string {
