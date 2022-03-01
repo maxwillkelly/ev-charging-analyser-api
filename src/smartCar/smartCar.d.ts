@@ -344,7 +344,7 @@ declare module 'smartcar' {
       id: string,
       token: string,
       options?: {
-        unitSystem?: string;
+        unitSystem?: UnitSystem;
         version?: any;
       },
     );
@@ -493,6 +493,8 @@ declare module 'smartcar' {
     ENDPOINT: (...params: any[]) => any;
   };
 
+  declare type UnitSystem = 'metric' | 'imperial';
+
   /**
    * @example
    * {
@@ -507,7 +509,7 @@ declare module 'smartcar' {
   declare type Meta = {
     dataAge: Date;
     requestId: string;
-    unitSystem: string;
+    unitSystem: UnitSystem;
   };
 
   /**
@@ -525,6 +527,8 @@ declare module 'smartcar' {
     meta: Meta;
   };
 
+  declare type ChargeState = 'CHARGING' | 'FULLY_CHARGED' | 'NOT_CHARGING';
+
   /**
    * @example
    * {
@@ -541,7 +545,7 @@ declare module 'smartcar' {
    */
   declare type Charge = {
     isPluggedIn: boolean;
-    state: string;
+    state: ChargeState;
     meta: Meta;
   };
 

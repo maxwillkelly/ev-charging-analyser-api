@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ActionResponseDto } from 'src/smartCar/dtos/actionResponse.dto';
 import { CarActionDto } from './dtos/carAction.dto';
-import { CarDto } from './dtos/addCar.dto';
+import { CarDto } from './dtos/car.dto';
 import { Location } from 'smartcar';
 import { CarsService } from './cars.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
