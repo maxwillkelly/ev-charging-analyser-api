@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma, SmartCarUser } from '@prisma/client';
 import { isPast } from 'date-fns';
 import SmartCar, { AuthClient, Vehicle, WebhookSubscription } from 'smartcar';
+import { RecordCarLocation } from 'src/location/dtos/recordCarLocation.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SmartCarService {
@@ -148,8 +149,15 @@ export class SmartCarService {
     return subscriptions;
   }
 
-  hashChallenge(challenge: string): string {
+  hashChallenge(dto: RecordCarLocation): string {
     const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
-    return SmartCar.hashChallenge(amt, challenge);
+    const challengeString = JSON.stringify(dto);
+    const hash = SmartCar.hashChallenge(amt, challengeString);
+    return hash;
   }
+
+  // verifyPayload(challenge: string, body: RecordCarLocation): string {
+  //   const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
+  //   return SmartCar.verifyPayload(amt, )
+  // }
 }
