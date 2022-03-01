@@ -40,16 +40,16 @@ export class LocationController {
 
   @Post('car')
   async recordCarLocation(@Body() dto: RecordCarLocation) {
+    console.log(`DTO: ${JSON.stringify(dto, null, 2)}`);
+
     switch (dto.eventName) {
       case 'verify':
         const data = dto.payload as ChallengePayload;
-        return this.smartCarService.hashChallenge(data.challenge);
+        return this.smartCarService.hashChallenge(data.challenge, dto);
 
       default:
-        console.log(dto);
+        return null;
     }
-
-    return null;
   }
 
   @ApiBearerAuth()
