@@ -42,7 +42,8 @@ export class LocationController {
   async recordCarLocation(@Body() dto: RecordCarLocation) {
     switch (dto.eventName) {
       case 'verify':
-        return this.smartCarService.hashChallenge(dto);
+        const data = dto.payload as ChallengePayload;
+        return this.smartCarService.hashChallenge(data.challenge);
 
       default:
         console.log(dto);
