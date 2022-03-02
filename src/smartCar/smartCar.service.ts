@@ -150,31 +150,9 @@ export class SmartCarService {
     return subscriptions;
   }
 
-  hashChallenge(challenge: string, dto: RecordCarLocation): string {
+  hashChallenge(challenge: string): string {
     const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
-    console.log(`Application Management Token: ${amt}`);
-    console.log(`Challenge: ${challenge}`);
-    console.log(`Payload: ${JSON.stringify(dto.payload, null, 2)}`);
-
-    // const challengeString = JSON.stringify(challenge);
-    // console.log(`JSON.stringify(challenge): ${challengeString}`);
-
-    const challengeHash = SmartCar.hashChallenge(amt, challenge);
-    console.log(`Challenge Hash: ${challengeHash}`);
-
-    // const jsonChallengeHash = SmartCar.hashChallenge(amt, challengeString);
-    // console.log(`JSON.stringify(challenge) Hash: ${jsonChallengeHash}`);
-
-    const dtoHash = SmartCar.hashChallenge(amt, JSON.stringify(dto));
-    console.log(`DTO Hash: ${dtoHash}`);
-
-    const payloadHash = SmartCar.hashChallenge(
-      amt,
-      JSON.stringify(dto.payload),
-    );
-    console.log(`Payload Hash: ${payloadHash}`);
-
-    return challengeHash;
+    return SmartCar.hashChallenge(amt, challenge);
   }
 
   // verifyPayload(challenge: string, body: RecordCarLocation): string {

@@ -40,16 +40,15 @@ export class LocationController {
 
   @Post('car')
   async recordCarLocation(@Body() dto: RecordCarLocation) {
-    console.log(`DTO: ${JSON.stringify(dto, null, 2)}`);
-
     switch (dto.eventName) {
       case 'verify':
         const data = dto.payload as ChallengePayload;
         return {
-          challenge: this.smartCarService.hashChallenge(data.challenge, dto),
+          challenge: this.smartCarService.hashChallenge(data.challenge),
         };
 
       default:
+        console.log(JSON.stringify(dto, null, 2));
         return null;
     }
   }
