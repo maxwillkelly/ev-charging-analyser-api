@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ActionResponse, Location } from 'smartcar';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
-import { CarDto } from './dtos/addCar.dto';
-
+import { CarDto } from './dtos/car.dto';
 @Injectable()
 export class CarsService {
   constructor(
@@ -18,11 +17,12 @@ export class CarsService {
       vehicles.map(async (v) => {
         const attributes = await v.attributes();
         const batteryLevel = await v.battery();
+        const chargeStatus = await v.charge();
 
         const { make, model, year } = attributes;
         const name = `${year} ${make} ${model}`;
 
-        return { ...attributes, ...batteryLevel, name };
+        return { ...attributes, ...batteryLevel, ...chargeStatus, name };
       }),
     );
 
