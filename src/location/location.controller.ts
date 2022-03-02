@@ -43,13 +43,14 @@ export class LocationController {
     switch (dto.eventName) {
       case 'verify':
         const data = dto.payload as ChallengePayload;
-        return this.smartCarService.hashChallenge(data.challenge);
+        return {
+          challenge: this.smartCarService.hashChallenge(data.challenge),
+        };
 
       default:
-        console.log(dto);
+        console.log(JSON.stringify(dto, null, 2));
+        return null;
     }
-
-    return null;
   }
 
   @ApiBearerAuth()
