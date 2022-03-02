@@ -147,8 +147,6 @@ export class SmartCarService {
       vehicles.map(async (vehicle) => await vehicle.subscribe(webhookId)),
     );
 
-    console.log(subscriptions);
-
     return subscriptions;
   }
 

@@ -1,4 +1,5 @@
 import { IsDate, IsIn, IsUUID } from 'class-validator';
+import { UnitSystem } from 'smartcar';
 
 export class MetaDto {
   @IsDate()
@@ -8,5 +9,5 @@ export class MetaDto {
   requestId: string;
 
   @IsIn(['metric', 'imperial'])
-  unitSystem: string;
+  unitSystem: UnitSystem;
 }
