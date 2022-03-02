@@ -46,7 +46,7 @@ export class LocationController {
       case 'verify':
         const data = dto.payload as ChallengePayload;
         return {
-          signature: this.smartCarService.hashChallenge(data.challenge, dto),
+          challenge: this.smartCarService.hashChallenge(data.challenge, dto),
         };
 
       default:
