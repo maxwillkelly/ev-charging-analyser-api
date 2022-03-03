@@ -11,9 +11,11 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import {
-  ChallengePayload,
-  RecordCarLocation,
-} from './dtos/recordCarLocation.dto';
+  VerifyPayload,
+  RecordCarLocationWebhook,
+  SchedulePayload,
+  VerifyWebhookDto,
+} from './dtos/recordCarLocationWebhook.dto';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
 import { LocationService } from './location.service';
 
@@ -39,17 +41,29 @@ export class LocationController {
   }
 
   @Post('car')
-  async recordCarLocation(@Body() dto: RecordCarLocation) {
+  async recordCarLocation(
+    @Body() dto: RecordCarLocationWebhook,
+  ): Promise<VerifyWebhookDto | boolean> {
     switch (dto.eventName) {
       case 'verify':
-        const data = dto.payload as ChallengePayload;
-        return {
-          challenge: this.smartCarService.hashChallenge(data.challenge),
-        };
+        const verifyPayload = dto.payload as VerifyPayload;
+
+        const challenge = this.smartCarService.hashChallenge(
+          verifyPayload.challenge,
+        );
+
+        return { challenge };
+
+      case 'schedule':
+        const schedulePayload = dto.payload as SchedulePayload;
+
+        return await this.locationService.recordCarLocationWebhookAsync(
+          schedulePayload,
+        );
 
       default:
         console.log(JSON.stringify(dto, null, 2));
-        return null;
+        return false;
     }
   }
 
