@@ -3,10 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma, SmartCarUser } from '@prisma/client';
 import { isPast } from 'date-fns';
 import SmartCar, { AuthClient, Vehicle, WebhookSubscription } from 'smartcar';
-import {
-  ChallengePayload,
-  RecordCarLocation,
-} from 'src/location/dtos/recordCarLocation.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SmartCarService {

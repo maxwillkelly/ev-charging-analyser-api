@@ -3,16 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { v4 as uuid } from 'uuid';
 import { CassandraService } from 'src/cassandra/cassandra.service';
-import { CarLocation } from './dtos/recordCarLocation.dto';
+import { SchedulePayload } from './dtos/recordCarLocationWebhook.dto';
 import { Location } from './location.model';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
-import { JwtService } from '@nestjs/jwt';
+import { CarLocation } from './dtos/recordCarLocation.dto';
+
 @Injectable()
 export class LocationService implements OnModuleInit {
   constructor(
     private readonly cassandraService: CassandraService,
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
   ) {}
 
   locationMapper: mapping.ModelMapper<Location>;
@@ -74,6 +74,31 @@ export class LocationService implements OnModuleInit {
         recordedAt: new Date(),
       })
     ).toArray();
+  }
+
+  async recordCarLocationWebhookAsync(
+    schedulePayload: SchedulePayload,
+  ): Promise<boolean> {
+    const { vehicles } = schedulePayload;
+
+    vehicles.forEach((v) => {
+      const { data, vehicleId, timestamp } = v;
+
+      data.forEach(async (d) => {
+        const location = d.body;
+        const { latitude, longitude } = location;
+
+        await this.locationMapper.insert({
+          id: uuid(),
+          carId: vehicleId,
+          latitude,
+          longitude,
+          recordedAt: timestamp,
+        });
+      });
+    });
+
+    return true;
   }
 
   convertUnixTimeToDateString(unixTime: number): string {

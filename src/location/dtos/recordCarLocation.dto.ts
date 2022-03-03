@@ -1,31 +1,4 @@
-import {
-  IsIn,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
-
-export type SmartCarMode = 'test' | 'live';
-export class RecordCarLocation {
-  @IsNumberString()
-  version: string;
-
-  @IsUUID()
-  webhookId: string;
-
-  @IsString()
-  eventName: string;
-
-  @IsOptional()
-  @IsIn(['test', 'live'])
-  mode?: SmartCarMode;
-
-  @ValidateNested()
-  payload?: CarLocation | ChallengePayload;
-}
+import { IsNumber, IsUUID } from 'class-validator';
 
 export class CarLocation {
   @IsUUID()
@@ -36,9 +9,4 @@ export class CarLocation {
 
   @IsNumber()
   longitude: number;
-}
-
-export class ChallengePayload {
-  @IsString()
-  challenge: string;
 }
