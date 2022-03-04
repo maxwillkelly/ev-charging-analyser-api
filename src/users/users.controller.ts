@@ -1,17 +1,16 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { hash } from 'bcryptjs';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dtos/login.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginResponse } from 'src/auth/dtos/login.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -26,13 +25,6 @@ export class UsersController {
 
   @Post('register')
   async register(@Body() command: RegisterDto): Promise<LoginResponse> {
-    const { firstName, lastName, email, password } = command;
-    const hashedPassword = await hash(password, 10);
-
-    const user = await this.prismaService.user.create({
-      data: { firstName, lastName, email, password: hashedPassword },
-    });
-
-    return this.authService.login(user);
+    return await this.usersService.register(command);
   }
 }
