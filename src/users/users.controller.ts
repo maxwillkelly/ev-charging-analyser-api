@@ -1,4 +1,10 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { hash } from 'bcryptjs';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginDto } from 'src/auth/dtos/login.dto';
@@ -6,6 +12,7 @@ import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginResponse } from 'src/auth/dtos/login.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -29,10 +36,20 @@ export class UsersController {
     const { firstName, lastName, email, password } = command;
     const hashedPassword = await hash(password, 10);
 
-    const user = await this.prismaService.user.create({
-      data: { firstName, lastName, email, password: hashedPassword },
-    });
+    try {
+      const user = await this.prismaService.user.create({
+        data: { firstName, lastName, email, password: hashedPassword },
+      });
 
-    return this.authService.login(user);
+      return this.authService.login(user);
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new BadRequestException(
+            'An account is already registered using this email',
+          );
+        }
+      }
+    }
   }
 }
