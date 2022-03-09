@@ -74,6 +74,8 @@ export class SmartCarService {
       })
       .then((u) => u.smartCarUser);
 
+    if (!smartCarUser) return;
+
     if (isPast(smartCarUser.expiration)) {
       const data = await this.client.exchangeRefreshToken(
         smartCarUser.refreshToken,
@@ -90,6 +92,9 @@ export class SmartCarService {
 
   async getVehiclesAsync(userId: string): Promise<Vehicle[]> {
     const accessToken = await this.getAccessTokenAsync(userId);
+
+    if (!accessToken) return [];
+
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
 
