@@ -53,12 +53,8 @@ export class SmartCarService {
       where: {
         id_userId: { id: smartCarUserId, userId },
       },
-      create: {
-        ...access,
-        id: smartCarUserId,
-        userId,
-      },
-      update: { ...access },
+      create: { id: smartCarUserId, userId, ...access },
+      update: { id: smartCarUserId, userId, ...access },
     });
 
     return true;
@@ -73,6 +69,8 @@ export class SmartCarService {
         },
       })
       .then((u) => u.smartCarUser);
+
+    if (!smartCarUser) return;
 
     if (isPast(smartCarUser.expiration)) {
       const data = await this.client.exchangeRefreshToken(
@@ -90,6 +88,9 @@ export class SmartCarService {
 
   async getVehiclesAsync(userId: string): Promise<Vehicle[]> {
     const accessToken = await this.getAccessTokenAsync(userId);
+
+    if (!accessToken) return [];
+
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
 
