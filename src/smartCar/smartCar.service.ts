@@ -53,12 +53,8 @@ export class SmartCarService {
       where: {
         id_userId: { id: smartCarUserId, userId },
       },
-      create: {
-        ...access,
-        id: smartCarUserId,
-        userId,
-      },
-      update: { ...access },
+      create: { id: smartCarUserId, userId, ...access },
+      update: { id: smartCarUserId, userId, ...access },
     });
 
     return true;
