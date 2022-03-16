@@ -53,4 +53,24 @@ export class CarsController {
     const { userId, vehicleId } = command;
     return this.carsService.unlockCarAsync(userId, vehicleId);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('startCharging')
+  async startChargingCar(
+    @Body() command: CarActionDto,
+  ): Promise<ActionResponseDto> {
+    const { userId, vehicleId } = command;
+    return this.carsService.startChargingCarAsync(userId, vehicleId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post('stopCharging')
+  async stopChargingCar(
+    @Body() command: CarActionDto,
+  ): Promise<ActionResponseDto> {
+    const { userId, vehicleId } = command;
+    return this.carsService.stopChargingCarAsync(userId, vehicleId);
+  }
 }

@@ -66,4 +66,26 @@ export class CarsService {
     );
     return await vehicle.unlock();
   }
+
+  async startChargingCarAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<ActionResponse> {
+    const vehicle = await this.smartCarService.getVehicleAsync(
+      userId,
+      vehicleId,
+    );
+    return await vehicle.startCharge();
+  }
+
+  async stopChargingCarAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<ActionResponse> {
+    const vehicle = await this.smartCarService.getVehicleAsync(
+      userId,
+      vehicleId,
+    );
+    return await vehicle.stopCharge();
+  }
 }
