@@ -52,13 +52,16 @@ export class BatteryChargeService implements OnModuleInit {
   async recordBatteryLevelAsync(
     batteryLevel: Battery,
     vehicleId: string,
-    timestamp: string,
+    recordedAt: string,
   ): Promise<BatteryCharge[]> {
+    const { range, percentRemaining } = batteryLevel;
+
     return (
       await this.batteryChargeMapper.insert({
-        ...batteryLevel,
+        range,
+        percentRemaining,
         vehicleId,
-        timestamp,
+        recordedAt,
       })
     ).toArray();
   }
@@ -66,13 +69,16 @@ export class BatteryChargeService implements OnModuleInit {
   async recordChargeStateAsync(
     chargeState: Charge,
     vehicleId: string,
-    timestamp: string,
+    recordedAt: string,
   ): Promise<BatteryCharge[]> {
+    const { isPluggedIn, state } = chargeState;
+
     return (
       await this.batteryChargeMapper.insert({
-        ...chargeState,
+        isPluggedIn,
+        state,
         vehicleId,
-        timestamp,
+        recordedAt,
       })
     ).toArray();
   }

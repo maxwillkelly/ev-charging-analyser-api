@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Battery, Charge, Location } from 'smartcar';
+import { BatteryChargeService } from 'src/charge/batteryCharge.service';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import {
@@ -13,6 +14,7 @@ import {
 @Injectable()
 export class WebhookService {
   constructor(
+    private readonly batteryChargeService: BatteryChargeService,
     private readonly locationService: LocationService,
     private readonly smartCarService: SmartCarService,
   ) {}
@@ -64,13 +66,19 @@ export class WebhookService {
     switch (path) {
       case '/battery':
         const battery = body as Battery;
-        console.log(battery);
-        break;
+        return await this.batteryChargeService.recordBatteryLevelAsync(
+          battery,
+          vehicleId,
+          timestamp,
+        );
 
       case '/charge':
         const charge = body as Charge;
-        console.log(charge);
-        break;
+        return await this.batteryChargeService.recordChargeStateAsync(
+          charge,
+          vehicleId,
+          timestamp,
+        );
 
       case '/location':
         const location = body as Location;
