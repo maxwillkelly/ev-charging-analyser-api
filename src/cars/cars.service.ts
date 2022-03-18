@@ -15,9 +15,11 @@ export class CarsService {
 
     const cars = Promise.all(
       vehicles.map(async (v) => {
-        const attributes = await v.attributes();
-        const batteryLevel = await v.battery();
-        const chargeStatus = await v.charge();
+        const batchResponse = await v.batch(['/', '/battery', '/charge']);
+
+        const attributes = await batchResponse.attributes();
+        const batteryLevel = await batchResponse.battery();
+        const chargeStatus = await batchResponse.charge();
 
         const { make, model, year } = attributes;
         const name = `${year} ${make} ${model}`;

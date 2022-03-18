@@ -490,7 +490,7 @@ declare module 'smartcar' {
    * if the endpoint resulted in an error.
    */
   declare type Batch = {
-    ENDPOINT: (...params: any[]) => any;
+    [ENDPOINT: string]: (...params: any[]) => any;
   };
 
   declare type UnitSystem = 'metric' | 'imperial';
