@@ -17,9 +17,9 @@ export class CarsService {
       vehicles.map(async (v) => {
         const batchResponse = await v.batch(['/', '/battery', '/charge']);
 
-        const attributes = await batchResponse.attributes();
-        const batteryLevel = await batchResponse.battery();
-        const chargeStatus = await batchResponse.charge();
+        const attributes = batchResponse.attributes();
+        const batteryLevel = batchResponse.battery();
+        const chargeStatus = batchResponse.charge();
 
         const { make, model, year } = attributes;
         const name = `${year} ${make} ${model}`;
