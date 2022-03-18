@@ -1,17 +1,19 @@
 import {
   IsDateString,
   IsIn,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { Location } from 'smartcar';
+import { Battery, Charge, Location } from 'smartcar';
 
 export type SmartCarMode = 'test' | 'live';
+export type WebhookPath = '/battery' | '/charge' | '/location';
 
-export class RecordCarLocationWebhook {
+export class WebhookDto {
   @IsNumberString()
   version: string;
 
@@ -64,14 +66,14 @@ export class VehicleWebhookHeaders {
 }
 
 export class VehicleWebhookData {
-  @IsIn(['/location'])
-  path: string;
+  @IsIn(['/battery', '/charge', '/location'])
+  path: WebhookPath;
 
-  @IsIn([200])
+  @IsNumber()
   code: number;
 
   @ValidateNested()
-  body: Location;
+  body: Battery | Charge | Location;
 
   @ValidateNested()
   headers: VehicleWebhookHeaders;

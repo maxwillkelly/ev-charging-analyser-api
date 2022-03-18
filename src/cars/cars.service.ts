@@ -36,11 +36,13 @@ export class CarsService {
     );
 
     const location = await vehicle.location();
+    const timestamp = new Date().toISOString();
 
-    await this.locationService.recordCarLocationAsync({
+    await this.locationService.recordCarLocationAsync(
+      location,
       vehicleId,
-      ...location,
-    });
+      timestamp,
+    );
 
     return location;
   }

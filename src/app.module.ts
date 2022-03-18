@@ -15,6 +15,8 @@ import { LocationService } from './location/location.service';
 import { CarsService } from './cars/cars.service';
 import { AuthService } from './auth/auth.service';
 import { UsersService } from './users/users.service';
+import { WebhookController } from './webhook/webhook.controller';
+import { WebhookService } from './webhook/webhook.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -51,6 +53,7 @@ const validationSchema = Joi.object({
     UsersController,
     CarsController,
     LocationController,
+    WebhookController,
   ],
   providers: [
     AuthService,
@@ -60,6 +63,7 @@ const validationSchema = Joi.object({
     LocationService,
     CarsService,
     UsersService,
+    WebhookService,
   ],
 })
 export class AppModule {}
