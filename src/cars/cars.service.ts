@@ -6,7 +6,8 @@ import {
   Charge,
   Location,
 } from 'smartcar';
-import { BatteryChargeService } from 'src/charge/batteryCharge.service';
+import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
+import { BatteryChargeService } from 'src/batteryCharge/batteryCharge.service';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/car.dto';
@@ -108,5 +109,9 @@ export class CarsService {
       vehicleId,
     );
     return await vehicle.stopCharge();
+  }
+
+  async getChargingHistoryAsync(vehicleId: string): Promise<BatteryCharge[]> {
+    return this.batteryChargeService.getBatteryChargesByVehicleAsync(vehicleId);
   }
 }

@@ -24,8 +24,8 @@ export class BatteryChargeService implements OnModuleInit {
         range float,
         percent_remaining float,
         is_plugged_in boolean,
-        PRIMARY KEY ((vehicle_id, recorded_at))
-      );
+        PRIMARY KEY (vehicle_id, recorded_at)
+      ) WITH CLUSTERING ORDER BY (recorded_at DESC);
     `;
 
     this.cassandraService.run(cql);
@@ -47,6 +47,12 @@ export class BatteryChargeService implements OnModuleInit {
 
   async getBatteryChargesAsync(): Promise<BatteryCharge[]> {
     return (await this.batteryChargeMapper.findAll()).toArray();
+  }
+
+  async getBatteryChargesByVehicleAsync(
+    vehicleId: string,
+  ): Promise<BatteryCharge[]> {
+    return (await this.batteryChargeMapper.find({ vehicleId })).toArray();
   }
 
   async recordBatteryChargeAsync(

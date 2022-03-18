@@ -14,6 +14,7 @@ import { Location } from 'smartcar';
 import { CarsService } from './cars.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
 
 @Controller('cars')
 export class CarsController {
@@ -72,5 +73,14 @@ export class CarsController {
   ): Promise<ActionResponseDto> {
     const { userId, vehicleId } = command;
     return this.carsService.stopChargingCarAsync(userId, vehicleId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get('chargingHistory')
+  async chargingHistory(
+    @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
+  ): Promise<BatteryCharge[]> {
+    return this.carsService.getChargingHistoryAsync(vehicleId);
   }
 }
