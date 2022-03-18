@@ -348,6 +348,10 @@ declare module 'smartcar' {
         version?: any;
       },
     );
+
+    id: string;
+    token: string;
+
     /**
      * Fetch the list of permissions that this application has been granted
      * @param [paging.limit] - number of permissions to return

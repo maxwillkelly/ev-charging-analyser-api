@@ -74,7 +74,7 @@ export class WebhookService {
 
       case '/charge':
         const charge = body as Charge;
-        return await this.batteryChargeService.recordChargeStateAsync(
+        return await this.batteryChargeService.recordChargeStatusAsync(
           charge,
           vehicleId,
           timestamp,

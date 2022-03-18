@@ -6,6 +6,7 @@ import {
   Charge,
   Location,
 } from 'smartcar';
+import { BatteryChargeService } from 'src/charge/batteryCharge.service';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/car.dto';
@@ -14,18 +15,28 @@ export class CarsService {
   constructor(
     private readonly smartCarService: SmartCarService,
     private readonly locationService: LocationService,
+    private readonly batteryChargeService: BatteryChargeService,
   ) {}
 
   async getCarsAsync(userId: string): Promise<CarDto[]> {
     const vehicles = await this.smartCarService.getVehiclesAsync(userId);
 
     const cars = Promise.all(
-      vehicles.map(async (v) => {
-        const batchResponse = await v.batch(['/', '/battery', '/charge']);
+      vehicles.map(async (vehicle) => {
+        const batchResponse = await vehicle.batch(['/', '/battery', '/charge']);
 
         const attributes = batchResponse.attributes() as Attributes;
         const batteryLevel = batchResponse.battery() as Battery;
         const chargeStatus = batchResponse.charge() as Charge;
+
+        const currentDateTime = new Date().toISOString();
+
+        await this.batteryChargeService.recordBatteryChargeAsync(
+          batteryLevel,
+          chargeStatus,
+          vehicle.id,
+          currentDateTime,
+        );
 
         const { make, model, year } = attributes;
         const name = `${year} ${make} ${model}`;
