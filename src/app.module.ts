@@ -18,6 +18,7 @@ import { UsersService } from './users/users.service';
 import { WebhookController } from './webhook/webhook.controller';
 import { WebhookService } from './webhook/webhook.service';
 import { BatteryChargeService } from './batteryCharge/batteryCharge.service';
+import { ChargeService } from './charge/charge.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -67,6 +68,7 @@ const validationSchema = Joi.object({
     UsersService,
     WebhookService,
     BatteryChargeService,
+    ChargeService,
   ],
 })
 export class AppModule {}

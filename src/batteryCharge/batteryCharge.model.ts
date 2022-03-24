@@ -2,7 +2,7 @@ export class BatteryCharge {
   carId: string;
   recordedAt: string;
   range?: number;
-  percentRemaining?: string;
+  percentRemaining?: number;
   isPluggedIn?: string;
   state?: string;
 }
