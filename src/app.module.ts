@@ -22,6 +22,7 @@ import { BatteryChargeService } from './batteryCharge/batteryCharge.service';
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
   API_ENV: Joi.string().valid('local', 'development', 'production').required(),
+  JWT_KEY: Joi.string().required(),
   SMARTCAR_CLIENT_ID: Joi.string().uuid().required(),
   SMARTCAR_CLIENT_SECRET: Joi.string().uuid().required(),
   SMARTCAR_MANAGEMENT_API_TOKEN: Joi.string().uuid().required(),
