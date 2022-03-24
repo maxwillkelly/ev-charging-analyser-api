@@ -45,14 +45,16 @@ export class BatteryChargeService implements OnModuleInit {
       .forModel('BatteryCharge');
   }
 
-  async getBatteryChargesAsync(): Promise<BatteryCharge[]> {
-    return (await this.batteryChargeMapper.findAll()).toArray();
-  }
+  // async getBatteryChargesAsync(): Promise<BatteryCharge[]> {
+  //   return (await this.batteryChargeMapper.findAll({ limit: 10 })).toArray();
+  // }
 
   async getBatteryChargesByVehicleAsync(
     vehicleId: string,
   ): Promise<BatteryCharge[]> {
-    return (await this.batteryChargeMapper.find({ vehicleId })).toArray();
+    return (
+      await this.batteryChargeMapper.find({ vehicleId }, { limit: 10 })
+    ).toArray();
   }
 
   async recordBatteryChargeAsync(
