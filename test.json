@@ -1,0 +1,62 @@
+{
+    "version": "2.0",
+    "webhookId": "d7fe1b46-bc09-455b-8426-8f2833d55316",
+    "eventName": "schedule",
+    "mode": "test",
+    "payload": {
+        "vehicles": [{
+            "vehicleId": "967b9ef1-6bb6-45c0-9e26-07ef435c87c6",
+            "requestId": "ac2c05e5-5537-4e61-9564-f7df33b42438",
+            "data": [{
+                    "path": "/battery",
+                    "code": 200,
+                    "body": {
+                        "range": 200,
+                        "percentRemaining": 20,
+                        "meta": {
+                            "dataAge": "2022-03-18T16:16:40+0000",
+                            "requestId": "ac2c05e5-5537-4e61-9564-f7df33b42438",
+                            "unitSystem": "metric"
+                        }
+                    },
+                    "headers": {
+                        "sc-data-age": "2022-03-18T16:16:40+0000"
+                    }
+                },
+                {
+                    "path": "/charge",
+                    "code": 200,
+                    "body": {
+                        "isPluggedIn": true,
+                        "state": "CHARGING",
+                        "meta": {
+                            "dataAge": "2022-03-18T16:16:40+0000",
+                            "requestId": "ac2c05e5-5537-4e61-9564-f7df33b42438",
+                            "unitSystem": "metric"
+                        }
+                    },
+                    "headers": {
+                        "sc-data-age": "2022-03-18T16:16:40+0000"
+                    }
+                },
+                {
+                    "path": "/location",
+                    "code": 200,
+                    "body": {
+                        "latitude": -11.50398,
+                        "longitude": -16.50941,
+                        "meta": {
+                            "dataAge": "2022-03-18T16:16:40+0000",
+                            "requestId": "ac2c05e5-5537-4e61-9564-f7df33b42438",
+                            "unitSystem": "metric"
+                        }
+                    },
+                    "headers": {
+                        "sc-data-age": "2022-03-18T16:16:40+0000"
+                    }
+                }
+            ],
+            "timestamp": "2022-03-18T16:16:40+0000"
+        }]
+    }
+}

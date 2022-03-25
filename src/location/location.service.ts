@@ -3,10 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { v4 as uuid } from 'uuid';
 import { CassandraService } from 'src/cassandra/cassandra.service';
-import { SchedulePayload } from './dtos/recordCarLocationWebhook.dto';
+import { Location as SmartCarLocation } from 'smartcar';
 import { Location } from './location.model';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';
-import { CarLocation } from './dtos/recordCarLocation.dto';
 
 @Injectable()
 export class LocationService implements OnModuleInit {
@@ -62,8 +61,12 @@ export class LocationService implements OnModuleInit {
     return (await this.locationMapper.find({ id })).toArray();
   }
 
-  async recordCarLocationAsync(location: CarLocation): Promise<Location[]> {
-    const { vehicleId, latitude, longitude } = location;
+  async recordCarLocationAsync(
+    location: SmartCarLocation,
+    vehicleId: string,
+    timestamp: string,
+  ): Promise<Location[]> {
+    const { latitude, longitude } = location;
 
     return (
       await this.locationMapper.insert({
@@ -71,34 +74,9 @@ export class LocationService implements OnModuleInit {
         carId: vehicleId,
         latitude,
         longitude,
-        recordedAt: new Date(),
+        recordedAt: timestamp,
       })
     ).toArray();
-  }
-
-  async recordCarLocationWebhookAsync(
-    schedulePayload: SchedulePayload,
-  ): Promise<boolean> {
-    const { vehicles } = schedulePayload;
-
-    vehicles.forEach((v) => {
-      const { data, vehicleId, timestamp } = v;
-
-      data.forEach(async (d) => {
-        const location = d.body;
-        const { latitude, longitude } = location;
-
-        await this.locationMapper.insert({
-          id: uuid(),
-          carId: vehicleId,
-          latitude,
-          longitude,
-          recordedAt: timestamp,
-        });
-      });
-    });
-
-    return true;
   }
 
   convertUnixTimeToDateString(unixTime: number): string {

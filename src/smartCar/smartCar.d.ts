@@ -348,6 +348,10 @@ declare module 'smartcar' {
         version?: any;
       },
     );
+
+    id: string;
+    token: string;
+
     /**
      * Fetch the list of permissions that this application has been granted
      * @param [paging.limit] - number of permissions to return
@@ -490,7 +494,7 @@ declare module 'smartcar' {
    * if the endpoint resulted in an error.
    */
   declare type Batch = {
-    ENDPOINT: (...params: any[]) => any;
+    [ENDPOINT: string]: (...params: any[]) => any;
   };
 
   declare type UnitSystem = 'metric' | 'imperial';

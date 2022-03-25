@@ -1,23 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { ActionResponse, Location } from 'smartcar';
+import {
+  ActionResponse,
+  Attributes,
+  Battery,
+  Charge,
+  Location,
+} from 'smartcar';
+import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
+import { BatteryChargeService } from 'src/batteryCharge/batteryCharge.service';
+import { ChargeService } from 'src/charge/charge.service';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/car.dto';
+import { Charge as ChargeModel } from 'src/charge/charge.model';
 @Injectable()
 export class CarsService {
   constructor(
     private readonly smartCarService: SmartCarService,
     private readonly locationService: LocationService,
+    private readonly batteryChargeService: BatteryChargeService,
+    private readonly chargeService: ChargeService,
   ) {}
 
   async getCarsAsync(userId: string): Promise<CarDto[]> {
     const vehicles = await this.smartCarService.getVehiclesAsync(userId);
 
     const cars = Promise.all(
-      vehicles.map(async (v) => {
-        const attributes = await v.attributes();
-        const batteryLevel = await v.battery();
-        const chargeStatus = await v.charge();
+      vehicles.map(async (vehicle) => {
+        const batchResponse = await vehicle.batch(['/', '/battery', '/charge']);
+
+        const attributes = batchResponse.attributes() as Attributes;
+        const batteryLevel = batchResponse.battery() as Battery;
+        const chargeStatus = batchResponse.charge() as Charge;
+
+        const currentDateTime = new Date().toISOString();
+
+        await this.batteryChargeService.recordBatteryChargeAsync(
+          batteryLevel,
+          chargeStatus,
+          vehicle.id,
+          currentDateTime,
+        );
 
         const { make, model, year } = attributes;
         const name = `${year} ${make} ${model}`;
@@ -36,11 +59,13 @@ export class CarsService {
     );
 
     const location = await vehicle.location();
+    const timestamp = new Date().toISOString();
 
-    await this.locationService.recordCarLocationAsync({
+    await this.locationService.recordCarLocationAsync(
+      location,
       vehicleId,
-      ...location,
-    });
+      timestamp,
+    );
 
     return location;
   }
@@ -87,5 +112,13 @@ export class CarsService {
       vehicleId,
     );
     return await vehicle.stopCharge();
+  }
+
+  async getChargingHistoryAsync(vehicleId: string): Promise<BatteryCharge[]> {
+    return this.batteryChargeService.getBatteryChargesByVehicleAsync(vehicleId);
+  }
+
+  async getChargesAsync(vehicleId: string): Promise<ChargeModel[]> {
+    return this.chargeService.getChargesAsync(vehicleId);
   }
 }
