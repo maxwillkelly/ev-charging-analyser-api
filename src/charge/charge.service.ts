@@ -60,18 +60,6 @@ export class ChargeService implements OnModuleInit {
       lc ? lc[0] : undefined,
     );
 
-    console.log(
-      `Last Battery Charge Recorded At: ${lastBatteryCharge?.recordedAt}`,
-    );
-    console.log(
-      `Last Battery Charge Recorded At Type: ${typeof lastBatteryCharge?.recordedAt}`,
-    );
-
-    console.log(`Last Charge Finished At: ${lastCharge?.finishedAtTime}`);
-    console.log(
-      `Last Charge Finished At Type: ${typeof lastCharge?.finishedAtTime}`,
-    );
-
     if (
       lastBatteryCharge?.recordedAt.getTime() ===
       lastCharge?.finishedAtTime.getTime()
