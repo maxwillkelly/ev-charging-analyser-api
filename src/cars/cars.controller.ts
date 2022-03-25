@@ -90,7 +90,8 @@ export class CarsController {
   @Get('charges')
   async getCharges(
     @Query('vehicleId', ParseUUIDPipe) vehicleId: string,
+    @Query('date') date: string,
   ): Promise<Charge[]> {
-    return this.carsService.getChargesAsync(vehicleId);
+    return this.carsService.getChargesAsync(vehicleId, date);
   }
 }
