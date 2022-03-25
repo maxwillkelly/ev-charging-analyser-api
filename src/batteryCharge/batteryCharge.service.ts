@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { Battery, Charge } from 'smartcar';
 import { CassandraService } from 'src/cassandra/cassandra.service';
+import { ChargeService } from 'src/charge/charge.service';
 import { BatteryCharge } from './batteryCharge.model';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class BatteryChargeService implements OnModuleInit {
   constructor(
     private readonly cassandraService: CassandraService,
     private readonly configService: ConfigService,
+    private readonly chargeService: ChargeService,
   ) {}
 
   batteryChargeMapper: mapping.ModelMapper<BatteryCharge>;
@@ -51,9 +53,10 @@ export class BatteryChargeService implements OnModuleInit {
 
   async getBatteryChargesByVehicleAsync(
     vehicleId: string,
+    limit = 10,
   ): Promise<BatteryCharge[]> {
     return (
-      await this.batteryChargeMapper.find({ vehicleId }, { limit: 10 })
+      await this.batteryChargeMapper.find({ vehicleId }, { limit })
     ).toArray();
   }
 
@@ -63,19 +66,8 @@ export class BatteryChargeService implements OnModuleInit {
     vehicleId: string,
     recordedAt: string,
   ) {
-    const { isPluggedIn, state } = chargeStatus;
-    const { range, percentRemaining } = batteryLevel;
-
-    return (
-      await this.batteryChargeMapper.insert({
-        isPluggedIn,
-        state,
-        range,
-        percentRemaining,
-        vehicleId,
-        recordedAt,
-      })
-    ).toArray();
+    await this.recordBatteryLevelAsync(batteryLevel, vehicleId, recordedAt);
+    await this.recordChargeStatusAsync(chargeStatus, vehicleId, recordedAt);
   }
 
   async recordBatteryLevelAsync(
@@ -84,6 +76,20 @@ export class BatteryChargeService implements OnModuleInit {
     recordedAt: string,
   ): Promise<BatteryCharge[]> {
     const { range, percentRemaining } = batteryLevel;
+
+    const lastBatteryCharge = await this.getBatteryChargesByVehicleAsync(
+      vehicleId,
+      1,
+    ).then((lbc) => (lbc ? lbc[0] : undefined));
+
+    if (percentRemaining > lastBatteryCharge?.percentRemaining) {
+      await this.chargeService.recordChargeAsync(
+        vehicleId,
+        percentRemaining,
+        recordedAt,
+        lastBatteryCharge,
+      );
+    }
 
     return (
       await this.batteryChargeMapper.insert({
