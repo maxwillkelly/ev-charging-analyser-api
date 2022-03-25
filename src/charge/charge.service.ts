@@ -1,25 +1,26 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { mapping } from 'cassandra-driver';
+import cassandra, { mapping } from 'cassandra-driver';
 import { Charge } from './charge.model';
 import { CassandraService } from 'src/cassandra/cassandra.service';
 import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
-import { parseISO } from 'date-fns';
+import { addDays, formatISO, parseISO } from 'date-fns';
 
 @Injectable()
 export class ChargeService implements OnModuleInit {
+  chargeMapper: mapping.ModelMapper<Charge>;
+  keyspace: string;
+
   constructor(
     private readonly cassandraService: CassandraService,
     private readonly configService: ConfigService,
   ) {}
 
-  chargeMapper: mapping.ModelMapper<Charge>;
-
   onModuleInit() {
-    const keyspace = this.configService.get<string>('CASSANDRA_KEYSPACE');
+    this.keyspace = this.configService.get<string>('CASSANDRA_KEYSPACE');
 
     const cql = `
-      CREATE TABLE IF NOT EXISTS ${keyspace}.charge (
+      CREATE TABLE IF NOT EXISTS ${this.keyspace}.charge (
         vehicle_id uuid, 
         started_at_percent_remaining float,
         finished_at_percent_remaining float,
@@ -34,7 +35,7 @@ export class ChargeService implements OnModuleInit {
     const mappingOptions: mapping.MappingOptions = {
       models: {
         Charge: {
-          keyspace,
+          keyspace: this.keyspace,
           tables: ['charge'],
           mappings: new mapping.UnderscoreCqlToCamelCaseMappings(),
         },
@@ -48,6 +49,25 @@ export class ChargeService implements OnModuleInit {
 
   async getChargesAsync(vehicleId: string, limit = 10): Promise<Charge[]> {
     return (await this.chargeMapper.find({ vehicleId }, { limit })).toArray();
+  }
+
+  async getChargesOnDayAsync(
+    vehicleId: string,
+    date: string,
+  ): Promise<Charge[]> {
+    const dayDate = parseISO(date);
+    const endDate = addDays(dayDate, 1);
+
+    const q = cassandra.mapping.q;
+
+    const result = (
+      await this.chargeMapper.find({
+        vehicleId,
+        startedAtTime: q.and(q.gte(dayDate), q.lt(endDate)),
+      })
+    ).toArray();
+
+    return result;
   }
 
   async recordChargeAsync(

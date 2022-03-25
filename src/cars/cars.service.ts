@@ -118,7 +118,10 @@ export class CarsService {
     return this.batteryChargeService.getBatteryChargesByVehicleAsync(vehicleId);
   }
 
-  async getChargesAsync(vehicleId: string): Promise<ChargeModel[]> {
-    return this.chargeService.getChargesAsync(vehicleId);
+  async getChargesAsync(
+    vehicleId: string,
+    date: string,
+  ): Promise<ChargeModel[]> {
+    return this.chargeService.getChargesOnDayAsync(vehicleId, date);
   }
 }
