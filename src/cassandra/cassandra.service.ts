@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { auth, Client, mapping, types } from 'cassandra-driver';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ArrayOrObject, auth, Client, mapping, types } from 'cassandra-driver';
 import { ConfigService } from '@nestjs/config';
 import fs from 'fs';
 
@@ -7,11 +7,15 @@ const CERTIFICATE_PATH = './certificates/sf-class2-root.crt';
 const CASSANDRA_LOCAL_PORT = 9042;
 const CASSANDRA_HOSTED_PORT = 9142;
 @Injectable()
-export class CassandraService {
+export class CassandraService implements OnModuleInit {
   client: Client;
-  mapper: mapping.Mapper;
 
   public constructor(private configService: ConfigService) {}
+
+  onModuleInit() {
+    this.client = this.createClient();
+    this.createKeyspace();
+  }
 
   private generateSslOptions(): Record<string, unknown> {
     const apiEnvironment = this.configService.get<string>('API_ENV');
@@ -53,7 +57,7 @@ export class CassandraService {
           : CASSANDRA_HOSTED_PORT,
     };
 
-    this.client = new Client({
+    return new Client({
       contactPoints: [contactPoint],
       localDataCenter,
       authProvider,
@@ -77,19 +81,10 @@ export class CassandraService {
   }
 
   createMapper(mappingOptions: mapping.MappingOptions) {
-    if (this.client == undefined) {
-      this.createClient();
-      this.createKeyspace();
-    }
     return new mapping.Mapper(this.client, mappingOptions);
   }
 
   run(cql: string) {
-    if (this.client == undefined) {
-      this.createClient();
-      this.createKeyspace();
-    }
-
     this.client.connect(() => this.client.execute(cql));
   }
 }
