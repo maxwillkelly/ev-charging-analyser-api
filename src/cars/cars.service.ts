@@ -8,15 +8,18 @@ import {
 } from 'smartcar';
 import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
 import { BatteryChargeService } from 'src/batteryCharge/batteryCharge.service';
+import { ChargeService } from 'src/charge/charge.service';
 import { LocationService } from 'src/location/location.service';
 import { SmartCarService } from 'src/smartCar/smartCar.service';
 import { CarDto } from './dtos/car.dto';
+import { Charge as ChargeModel } from 'src/charge/charge.model';
 @Injectable()
 export class CarsService {
   constructor(
     private readonly smartCarService: SmartCarService,
     private readonly locationService: LocationService,
     private readonly batteryChargeService: BatteryChargeService,
+    private readonly chargeService: ChargeService,
   ) {}
 
   async getCarsAsync(userId: string): Promise<CarDto[]> {
@@ -113,5 +116,9 @@ export class CarsService {
 
   async getChargingHistoryAsync(vehicleId: string): Promise<BatteryCharge[]> {
     return this.batteryChargeService.getBatteryChargesByVehicleAsync(vehicleId);
+  }
+
+  async getChargesAsync(vehicleId: string): Promise<ChargeModel[]> {
+    return this.chargeService.getChargesAsync(vehicleId);
   }
 }
