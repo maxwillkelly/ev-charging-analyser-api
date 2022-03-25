@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { ArrayOrObject, auth, Client, mapping, types } from 'cassandra-driver';
+import { auth, Client, mapping, types } from 'cassandra-driver';
 import { ConfigService } from '@nestjs/config';
 import fs from 'fs';
 
