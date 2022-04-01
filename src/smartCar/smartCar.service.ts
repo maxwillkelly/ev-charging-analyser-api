@@ -25,6 +25,8 @@ export class SmartCarService {
       'SMARTCAR_CLIENT_SECRET',
     );
     const redirectUri = this.configService.get<string>('SMARTCAR_REDIRECT_URI');
+    const testMode = this.configService.get<boolean>('SMARTCAR_TEST_MODE');
+
     this.webhookId = this.configService.get('SMARTCAR_CAR_LOCATION_WEBHOOK_ID');
     this.managementApiToken = this.configService.get(
       'SMARTCAR_MANAGEMENT_API_TOKEN',
@@ -34,7 +36,7 @@ export class SmartCarService {
       clientId,
       clientSecret,
       redirectUri,
-      testMode: true,
+      testMode,
     });
   }
 

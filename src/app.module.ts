@@ -29,6 +29,7 @@ const validationSchema = Joi.object({
   SMARTCAR_MANAGEMENT_API_TOKEN: Joi.string().uuid().required(),
   SMARTCAR_REDIRECT_URI: Joi.string().uri().required(),
   SMARTCAR_CAR_LOCATION_WEBHOOK_ID: Joi.string().uuid().required(),
+  SMARTCAR_TEST_MODE: Joi.boolean().required(),
   CASSANDRA_CONTACT_POINT: Joi.string().required(),
   CASSANDRA_LOCAL_DATA_CENTER: Joi.string().required(),
   CASSANDRA_KEYSPACE: Joi.string().required(),
