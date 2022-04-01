@@ -124,4 +124,8 @@ export class CarsService {
   ): Promise<ChargeModel[]> {
     return this.chargeService.getChargesOnDayAsync(vehicleId, date);
   }
+
+  async disconnectCarAsync(vehicleId: string, userId: string) {
+    return this.smartCarService.disconnectVehicleAsync(vehicleId, userId);
+  }
 }
