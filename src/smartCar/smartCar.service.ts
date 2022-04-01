@@ -1,12 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Prisma, SmartCarUser } from '@prisma/client';
 import { isPast } from 'date-fns';
-import SmartCar, { AuthClient, Vehicle, WebhookSubscription } from 'smartcar';
+import SmartCar, {
+  ActionResponse,
+  AuthClient,
+  Meta,
+  Vehicle,
+  WebhookSubscription,
+} from 'smartcar';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class SmartCarService {
-  private readonly client: AuthClient = null;
+  private readonly client: AuthClient;
+  private webhookId: string;
+  private managementApiToken: string;
 
   constructor(
     private configService: ConfigService,
@@ -17,6 +25,10 @@ export class SmartCarService {
       'SMARTCAR_CLIENT_SECRET',
     );
     const redirectUri = this.configService.get<string>('SMARTCAR_REDIRECT_URI');
+    this.webhookId = this.configService.get('SMARTCAR_CAR_LOCATION_WEBHOOK_ID');
+    this.managementApiToken = this.configService.get(
+      'SMARTCAR_MANAGEMENT_API_TOKEN',
+    );
 
     this.client = new SmartCar.AuthClient({
       clientId,
@@ -50,10 +62,7 @@ export class SmartCarService {
     );
 
     await this.prismaService.smartCarUser.upsert({
-      where: {
-        userId,
-        // id_userId: { id: smartCarUserId, userId },
-      },
+      where: { userId },
       create: { id: smartCarUserId, userId, ...access },
       update: { ...access },
     });
@@ -71,7 +80,8 @@ export class SmartCarService {
       })
       .then((u) => u.smartCarUser);
 
-    if (!smartCarUser) return;
+    if (!smartCarUser || isPast(smartCarUser.refreshExpiration))
+      throw new UnauthorizedException();
 
     if (isPast(smartCarUser.expiration)) {
       const data = await this.client.exchangeRefreshToken(
@@ -89,8 +99,6 @@ export class SmartCarService {
 
   async getVehiclesAsync(userId: string): Promise<Vehicle[]> {
     const accessToken = await this.getAccessTokenAsync(userId);
-
-    if (!accessToken) return [];
 
     const vehicleResponse = await SmartCar.getVehicles(accessToken);
     const vehicleIds = vehicleResponse.vehicles;
@@ -129,6 +137,15 @@ export class SmartCarService {
     });
   }
 
+  async disconnectVehicleAsync(
+    userId: string,
+    vehicleId: string,
+  ): Promise<ActionResponse> {
+    const accessToken = await this.getAccessTokenAsync(userId);
+    const vehicle = new SmartCar.Vehicle(vehicleId, accessToken);
+    return await vehicle.disconnect();
+  }
+
   async getVehicleAsync(userId: string, vehicleId: string): Promise<Vehicle> {
     const accessToken = await this.getAccessTokenAsync(userId);
     return new SmartCar.Vehicle(vehicleId, accessToken);
@@ -137,24 +154,18 @@ export class SmartCarService {
   async subscribeVehiclesAsync(
     vehicles: Vehicle[],
   ): Promise<WebhookSubscription[]> {
-    const webhookId = this.configService.get<string>(
-      'SMARTCAR_CAR_LOCATION_WEBHOOK_ID',
-    );
-
     const subscriptions = await Promise.all(
-      vehicles.map(async (vehicle) => await vehicle.subscribe(webhookId)),
+      vehicles.map(async (vehicle) => await vehicle.subscribe(this.webhookId)),
     );
 
     return subscriptions;
   }
 
-  hashChallenge(challenge: string): string {
-    const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
-    return SmartCar.hashChallenge(amt, challenge);
+  async unsubscribeVehicleAsync(vehicle: Vehicle): Promise<Meta> {
+    return await vehicle.unsubscribe(this.managementApiToken, this.webhookId);
   }
 
-  // verifyPayload(challenge: string, body: RecordCarLocation): string {
-  //   const amt = this.configService.get<string>('SMARTCAR_MANAGEMENT_API_TOKEN');
-  //   return SmartCar.verifyPayload(amt, )
-  // }
+  hashChallenge(challenge: string): string {
+    return SmartCar.hashChallenge(this.managementApiToken, challenge);
+  }
 }

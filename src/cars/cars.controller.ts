@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   ParseUUIDPipe,
   Post,
@@ -93,5 +94,13 @@ export class CarsController {
     @Query('date') date: string,
   ): Promise<Charge[]> {
     return this.carsService.getChargesAsync(vehicleId, date);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete('disconnect')
+  async disconnectCar(@Body() command: CarActionDto) {
+    const { userId, vehicleId } = command;
+    return this.carsService.disconnectCarAsync(userId, vehicleId);
   }
 }
