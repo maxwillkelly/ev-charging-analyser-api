@@ -15,7 +15,7 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') as number;
 
   const config = new DocumentBuilder()
-    .setTitle('ev-charging-analyser-server')
+    .setTitle('ev-charging-analyser-api')
     .setDescription('API for Analysing EV Charging Habits')
     .setVersion('1.0')
     .addBearerAuth()
