@@ -11,28 +11,6 @@ jobs:
       - heroku/deploy-via-git:
           app-name: $HEROKU_STAGING_APP_NAME
 
-  test:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/node@5.0.2
-    steps:
-      - checkout
-      - node/install:
-          install-yarn: true
-          node-version: '14.15.5'
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Dependencies
-          command: yarn
-      - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-      - run:
-          name: Run tests
-          command: yarn test
-
   deploy:
     executor: heroku/default
     steps:
@@ -45,9 +23,10 @@ workflows:
   stage_test_deploy:
     jobs:
       - stage
-      - test:
+      - node/test:
+          test-results-for: jest
           requires:
             - stage
       - deploy:
           requires:
-            - test
+            - node/test
