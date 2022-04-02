@@ -9,7 +9,7 @@ import SmartCar, {
   Vehicle,
   WebhookSubscription,
 } from 'smartcar';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class SmartCarService {
   private readonly client: AuthClient;

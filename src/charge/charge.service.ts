@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import cassandra, { mapping } from 'cassandra-driver';
 import { Charge } from './charge.model';
-import { CassandraService } from 'src/cassandra/cassandra.service';
-import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
+import { CassandraService } from '../cassandra/cassandra.service';
+import { BatteryCharge } from '../batteryCharge/batteryCharge.model';
 import { addDays, formatISO, parseISO } from 'date-fns';
 
 @Injectable()

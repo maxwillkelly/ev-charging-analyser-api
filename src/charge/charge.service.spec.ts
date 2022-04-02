@@ -1,4 +1,6 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CassandraService } from '../cassandra/cassandra.service';
 import { ChargeService } from './charge.service';
 
 describe('ChargeService', () => {
@@ -6,7 +8,8 @@ describe('ChargeService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ChargeService],
+      imports: [ConfigModule.forRoot()],
+      providers: [ChargeService, CassandraService],
     }).compile();
 
     service = module.get<ChargeService>(ChargeService);

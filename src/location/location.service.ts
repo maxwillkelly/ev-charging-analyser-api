@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { v4 as uuid } from 'uuid';
-import { CassandraService } from 'src/cassandra/cassandra.service';
+import { CassandraService } from '../cassandra/cassandra.service';
 import { Location as SmartCarLocation } from 'smartcar';
 import { Location } from './location.model';
 import { RecordUserLocation } from './dtos/recordUserLocation.dto';

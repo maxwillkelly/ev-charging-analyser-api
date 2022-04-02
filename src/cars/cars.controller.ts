@@ -8,15 +8,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ActionResponseDto } from 'src/smartCar/dtos/actionResponse.dto';
+import { ActionResponseDto } from '../smartCar/dtos/actionResponse.dto';
 import { CarActionDto } from './dtos/carAction.dto';
 import { CarDto } from './dtos/car.dto';
 import { Location } from 'smartcar';
 import { CarsService } from './cars.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
-import { Charge } from 'src/charge/charge.model';
+import { BatteryCharge } from '../batteryCharge/batteryCharge.model';
+import { Charge } from '../charge/charge.model';
 
 @Controller('cars')
 export class CarsController {

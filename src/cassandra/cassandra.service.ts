@@ -4,8 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import fs from 'fs';
 
 const CERTIFICATE_PATH = './certificates/sf-class2-root.crt';
-const CASSANDRA_LOCAL_PORT = 9042;
-const CASSANDRA_HOSTED_PORT = 9142;
 @Injectable()
 export class CassandraService implements OnModuleInit {
   private client: Client;

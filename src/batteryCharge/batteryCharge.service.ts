@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { mapping } from 'cassandra-driver';
 import { Battery, Charge } from 'smartcar';
-import { CassandraService } from 'src/cassandra/cassandra.service';
-import { ChargeService } from 'src/charge/charge.service';
+import { CassandraService } from '../cassandra/cassandra.service';
+import { ChargeService } from '../charge/charge.service';
 import { BatteryCharge } from './batteryCharge.model';
 
 @Injectable()
