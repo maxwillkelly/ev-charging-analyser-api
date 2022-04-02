@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
-  node: circleci/node@5.0.2
+  jest: blimmer/jest@1.0.0
 jobs:
   stage:
     executor: heroku/default
@@ -23,10 +23,10 @@ workflows:
   stage_test_deploy:
     jobs:
       - stage
-      - node/test:
-          test-results-for: jest
+      - jest/test:
+          package-manager: yarn
           requires:
             - stage
       - deploy:
           requires:
-            - node/test
+            - jest/test
