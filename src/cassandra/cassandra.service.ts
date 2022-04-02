@@ -8,21 +8,22 @@ const CASSANDRA_LOCAL_PORT = 9042;
 const CASSANDRA_HOSTED_PORT = 9142;
 @Injectable()
 export class CassandraService implements OnModuleInit {
-  client: Client;
+  private client: Client;
+  private apiEnvironment: string;
 
   public constructor(private configService: ConfigService) {}
 
   onModuleInit() {
+    this.apiEnvironment = this.configService.get('API_ENV');
     this.client = this.createClient();
     this.createKeyspace();
   }
 
   private generateSslOptions(): Record<string, unknown> {
-    const apiEnvironment = this.configService.get<string>('API_ENV');
     const host = this.configService.get<string>('CASSANDRA_CONTACT_POINT');
 
-    switch (apiEnvironment) {
-      case 'local':
+    switch (this.apiEnvironment) {
+      case 'development':
         return null;
 
       default:
@@ -37,25 +38,20 @@ export class CassandraService implements OnModuleInit {
   }
 
   private createClient() {
-    const apiEnvironment = this.configService.get<string>('API_ENV');
     const contactPoint = this.configService.get<string>(
       'CASSANDRA_CONTACT_POINT',
     );
     const localDataCenter = this.configService.get<string>(
       'CASSANDRA_LOCAL_DATA_CENTER',
     );
+    const port = this.configService.get<number>('CASSANDRA_PORT');
     const username = this.configService.get<string>('CASSANDRA_USER');
     const password = this.configService.get<string>('CASSANDRA_PASSWORD');
 
     const authProvider = new auth.PlainTextAuthProvider(username, password);
     const sslOptions = this.generateSslOptions();
 
-    const protocolOptions = {
-      port:
-        apiEnvironment === 'local'
-          ? CASSANDRA_LOCAL_PORT
-          : CASSANDRA_HOSTED_PORT,
-    };
+    const protocolOptions = { port };
 
     return new Client({
       contactPoints: [contactPoint],

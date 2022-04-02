@@ -3,7 +3,7 @@ version: '3.7'
 services:
   api:
     env_file:
-      - ./config/local.env
+      - ./config/development.env
     networks:
       - api-cassandra
       - api-postgres
