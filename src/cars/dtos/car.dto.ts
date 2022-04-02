@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ChargeState } from 'smartcar';
-import { MetaDto } from 'src/smartCar/dtos/meta.dto';
+import { MetaDto } from '../../smartCar/dtos/meta.dto';
 
 export class CarDto {
   @IsUUID()

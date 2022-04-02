@@ -3,7 +3,7 @@ version: '3.7'
 services:
   api:
     env_file:
-      - ./config/dev.env
+      - ./config/staging.env
     build:
       context: .
       target: development

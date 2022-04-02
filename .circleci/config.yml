@@ -1,7 +1,32 @@
 version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
+  jest: blimmer/jest@1.0.0
+jobs:
+  stage:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          app-name: $HEROKU_STAGING_APP_NAME
+
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          app-name: $HEROKU_PRODUCTION_APP_NAME
+
 workflows:
-  heroku_deploy:
+  stage_test_deploy:
     jobs:
-      - heroku/deploy-via-git
+      - stage
+      - jest/test:
+          package-manager: yarn
+          requires:
+            - stage
+      - deploy:
+          requires:
+            - jest/test

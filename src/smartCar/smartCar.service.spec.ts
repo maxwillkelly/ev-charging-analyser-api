@@ -1,4 +1,6 @@
+import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
 import { SmartCarService } from './smartCar.service';
 
 describe('SmartCarService', () => {
@@ -6,7 +8,8 @@ describe('SmartCarService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SmartCarService],
+      imports: [ConfigModule.forRoot()],
+      providers: [SmartCarService, PrismaService],
     }).compile();
 
     service = module.get<SmartCarService>(SmartCarService);

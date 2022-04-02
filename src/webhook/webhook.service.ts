@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Battery, Charge, Location } from 'smartcar';
-import { BatteryChargeService } from 'src/batteryCharge/batteryCharge.service';
-import { LocationService } from 'src/location/location.service';
-import { SmartCarService } from 'src/smartCar/smartCar.service';
+import { BatteryChargeService } from '../batteryCharge/batteryCharge.service';
+import { LocationService } from '../location/location.service';
+import { SmartCarService } from '../smartCar/smartCar.service';
 import {
   SchedulePayload,
   VehicleWebhookData,

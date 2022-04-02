@@ -22,15 +22,19 @@ import { ChargeService } from './charge/charge.service';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
-  API_ENV: Joi.string().valid('local', 'development', 'production').required(),
+  API_ENV: Joi.string()
+    .valid('development', 'staging', 'production')
+    .required(),
   JWT_KEY: Joi.string().required(),
   SMARTCAR_CLIENT_ID: Joi.string().uuid().required(),
   SMARTCAR_CLIENT_SECRET: Joi.string().uuid().required(),
   SMARTCAR_MANAGEMENT_API_TOKEN: Joi.string().uuid().required(),
   SMARTCAR_REDIRECT_URI: Joi.string().uri().required(),
   SMARTCAR_CAR_LOCATION_WEBHOOK_ID: Joi.string().uuid().required(),
+  SMARTCAR_TEST_MODE: Joi.boolean().required(),
   CASSANDRA_CONTACT_POINT: Joi.string().required(),
   CASSANDRA_LOCAL_DATA_CENTER: Joi.string().required(),
+  CASSANDRA_PORT: Joi.number().required(),
   CASSANDRA_KEYSPACE: Joi.string().required(),
   CASSANDRA_USER: Joi.string().required(),
   CASSANDRA_PASSWORD: Joi.string().required(),

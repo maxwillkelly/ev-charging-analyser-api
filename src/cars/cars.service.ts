@@ -6,13 +6,13 @@ import {
   Charge,
   Location,
 } from 'smartcar';
-import { BatteryCharge } from 'src/batteryCharge/batteryCharge.model';
-import { BatteryChargeService } from 'src/batteryCharge/batteryCharge.service';
-import { ChargeService } from 'src/charge/charge.service';
-import { LocationService } from 'src/location/location.service';
-import { SmartCarService } from 'src/smartCar/smartCar.service';
+import { BatteryCharge } from '../batteryCharge/batteryCharge.model';
+import { BatteryChargeService } from '../batteryCharge/batteryCharge.service';
+import { ChargeService } from '../charge/charge.service';
+import { LocationService } from '../location/location.service';
+import { SmartCarService } from '../smartCar/smartCar.service';
 import { CarDto } from './dtos/car.dto';
-import { Charge as ChargeModel } from 'src/charge/charge.model';
+import { Charge as ChargeModel } from '../charge/charge.model';
 @Injectable()
 export class CarsService {
   constructor(
