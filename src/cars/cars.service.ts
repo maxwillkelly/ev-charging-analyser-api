@@ -23,33 +23,41 @@ export class CarsService {
   ) {}
 
   async getCarsAsync(userId: string): Promise<CarDto[]> {
-    const vehicles = await this.smartCarService.getVehiclesAsync(userId);
+    try {
+      const vehicles = await this.smartCarService.getVehiclesAsync(userId);
 
-    const cars = Promise.all(
-      vehicles.map(async (vehicle) => {
-        const batchResponse = await vehicle.batch(['/', '/battery', '/charge']);
+      const cars = Promise.all(
+        vehicles.map(async (vehicle) => {
+          const batchResponse = await vehicle.batch([
+            '/',
+            '/battery',
+            '/charge',
+          ]);
 
-        const attributes = batchResponse.attributes() as Attributes;
-        const batteryLevel = batchResponse.battery() as Battery;
-        const chargeStatus = batchResponse.charge() as Charge;
+          const attributes = batchResponse.attributes() as Attributes;
+          const batteryLevel = batchResponse.battery() as Battery;
+          const chargeStatus = batchResponse.charge() as Charge;
 
-        const currentDateTime = new Date().toISOString();
+          const currentDateTime = new Date().toISOString();
 
-        await this.batteryChargeService.recordBatteryChargeAsync(
-          batteryLevel,
-          chargeStatus,
-          vehicle.id,
-          currentDateTime,
-        );
+          await this.batteryChargeService.recordBatteryChargeAsync(
+            batteryLevel,
+            chargeStatus,
+            vehicle.id,
+            currentDateTime,
+          );
 
-        const { make, model, year } = attributes;
-        const name = `${year} ${make} ${model}`;
+          const { make, model, year } = attributes;
+          const name = `${year} ${make} ${model}`;
 
-        return { ...attributes, ...batteryLevel, ...chargeStatus, name };
-      }),
-    );
+          return { ...attributes, ...batteryLevel, ...chargeStatus, name };
+        }),
+      );
 
-    return cars;
+      return cars;
+    } catch (error) {
+      return [];
+    }
   }
 
   async getLocationAsync(userId: string, vehicleId: string): Promise<Location> {
