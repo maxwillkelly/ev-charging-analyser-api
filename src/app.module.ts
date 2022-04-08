@@ -2,18 +2,16 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
-import { SmartCarService } from './smartCar/smartCar.service';
-import { SmartCarController } from './smartCar/smartCar.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CassandraService } from './cassandra/cassandra.service';
-import { WebhookController } from './webhook/webhook.controller';
-import { WebhookService } from './webhook/webhook.service';
 import { BatteryChargeService } from './batteryCharge/batteryCharge.service';
 import { ChargeService } from './charge/charge.service';
 import { CarsModule } from './cars/cars.module';
 import { LocationModule } from './location/location.module';
+import { WebhookModule } from './webhook/webhook.module';
+import { SmartCarModule } from './smartCar/smartCar.module';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -49,14 +47,14 @@ const validationSchema = Joi.object({
     AuthModule,
     CarsModule,
     LocationModule,
+    SmartCarModule,
     UsersModule,
+    WebhookModule,
   ],
-  controllers: [AppController, SmartCarController, WebhookController],
+  controllers: [AppController],
   providers: [
     PrismaService,
     CassandraService,
-    SmartCarService,
-    WebhookService,
     BatteryChargeService,
     ChargeService,
   ],

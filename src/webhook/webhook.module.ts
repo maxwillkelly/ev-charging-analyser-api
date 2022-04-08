@@ -4,20 +4,19 @@ import { BatteryChargeService } from '../batteryCharge/batteryCharge.service';
 import { CassandraService } from '../cassandra/cassandra.service';
 import { ChargeService } from '../charge/charge.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { CarsController } from './cars.controller';
-import { CarsService } from './cars.service';
+import { WebhookController } from './webhook.controller';
+import { WebhookService } from './webhook.service';
 import { SmartCarModule } from 'src/smartCar/smartCar.module';
 
 @Module({
   imports: [LocationModule, SmartCarModule],
-  controllers: [CarsController],
+  controllers: [WebhookController],
   providers: [
     PrismaService,
     CassandraService,
-    CarsService,
+    WebhookService,
     BatteryChargeService,
     ChargeService,
   ],
-  exports: [CarsService],
 })
-export class CarsModule {}
+export class WebhookModule {}
