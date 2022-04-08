@@ -6,19 +6,14 @@ import { SmartCarService } from './smartCar/smartCar.service';
 import { SmartCarController } from './smartCar/smartCar.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
-import { UsersController } from './users/users.controller';
 import { UsersModule } from './users/users.module';
-import { CarsController } from './cars/cars.controller';
 import { CassandraService } from './cassandra/cassandra.service';
-import { LocationController } from './location/location.controller';
-import { LocationService } from './location/location.service';
-import { CarsService } from './cars/cars.service';
-import { AuthService } from './auth/auth.service';
-import { UsersService } from './users/users.service';
 import { WebhookController } from './webhook/webhook.controller';
 import { WebhookService } from './webhook/webhook.service';
 import { BatteryChargeService } from './batteryCharge/batteryCharge.service';
 import { ChargeService } from './charge/charge.service';
+import { CarsModule } from './cars/cars.module';
+import { LocationModule } from './location/location.module';
 
 const validationSchema = Joi.object({
   PORT: Joi.number().default(5000),
@@ -52,24 +47,15 @@ const validationSchema = Joi.object({
       validationSchema,
     }),
     AuthModule,
+    CarsModule,
+    LocationModule,
     UsersModule,
   ],
-  controllers: [
-    AppController,
-    SmartCarController,
-    UsersController,
-    CarsController,
-    LocationController,
-    WebhookController,
-  ],
+  controllers: [AppController, SmartCarController, WebhookController],
   providers: [
-    AuthService,
-    SmartCarService,
     PrismaService,
     CassandraService,
-    LocationService,
-    CarsService,
-    UsersService,
+    SmartCarService,
     WebhookService,
     BatteryChargeService,
     ChargeService,
