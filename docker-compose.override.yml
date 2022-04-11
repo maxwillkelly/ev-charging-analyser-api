@@ -39,7 +39,7 @@ services:
   postgres:
     image: postgres:14.1-alpine
     env_file:
-      - ./config/dev.env
+      - ./config/development.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
