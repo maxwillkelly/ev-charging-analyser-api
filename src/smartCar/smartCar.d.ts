@@ -258,43 +258,43 @@ declare module 'smartcar' {
      * Legacy field from V1 error depicting a category/type/description
      * of the error.
      */
-    static error: string;
+    error: string;
     /**
      * Error message field inherited from StandardError
      */
-    static message: string;
+    message: string;
     /**
      * Description of meaning of the error.
      */
-    static description: string;
+    description: string;
     /**
      * Type of error
      */
-    static type: string;
+    type: string;
     /**
      * Error code
      */
-    static code: string;
+    code: string;
     /**
      * HTTP status code
      */
-    static statusCode: number;
+    statusCode: number;
     /**
      * Unique identifier for request
      */
-    static requestId: string;
+    requestId: string;
     /**
      * Possible resolution for fixing the error
      */
-    static resolution: SmartcarError.Resolution;
+    resolution: SmartcarError.Resolution;
     /**
      * Reference to Smartcar documentation
      */
-    static docURL: string;
+    docURL: string;
     /**
      * Further detail about the error in form of array of objects
      */
-    static details: Record<string, unknown>[];
+    details: Record<string, unknown>[];
   }
 
   declare namespace SmartcarError {

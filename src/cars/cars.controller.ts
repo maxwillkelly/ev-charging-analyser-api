@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import { ActionResponseDto } from '../smartCar/dtos/actionResponse.dto';
@@ -17,6 +18,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { BatteryCharge } from '../batteryCharge/batteryCharge.model';
 import { Charge } from '../charge/charge.model';
+import { SmartCarExceptionFilter } from '../smartCar/filter/smartCarException.filter';
 
 @Controller('cars')
 export class CarsController {
@@ -32,6 +34,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Get('location')
   async getLocation(
@@ -42,6 +45,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Post('lock')
   async lockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
@@ -50,6 +54,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Post('unlock')
   async unlockCar(@Body() command: CarActionDto): Promise<ActionResponseDto> {
@@ -58,6 +63,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Post('startCharging')
   async startChargingCar(
@@ -68,6 +74,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Post('stopCharging')
   async stopChargingCar(
@@ -78,6 +85,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Get('chargingHistory')
   async getChargingHistory(
@@ -87,6 +95,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Get('charges')
   async getCharges(
@@ -97,6 +106,7 @@ export class CarsController {
   }
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Delete('disconnect')
   async disconnectCar(@Body() command: CarActionDto) {
