@@ -218,9 +218,9 @@ declare module 'smartcar' {
       scope?: string[],
       options?: {
         forcePrompt?: boolean;
-        singleSelect?: boolean | any;
+        singleSelect?: boolean | { enabled: boolean; vin: string };
         state?: string;
-        makeBypass?: any;
+        makeBypass?: Record<string, string>;
         flags?: any;
       },
     ): string;
@@ -232,7 +232,10 @@ declare module 'smartcar' {
      * value is string or boolean value.
      * @returns New set of Access and Refresh tokens.
      */
-    async exchangeCode(code: string): Promise<Access>;
+    async exchangeCode(
+      code: string,
+      options?: { flags?: any },
+    ): Promise<Access>;
     /**
      * Exchange a refresh token for a new access object.
      * @param token - Refresh token to exchange for a new set of Access and
@@ -241,7 +244,10 @@ declare module 'smartcar' {
      * value is string or boolean value.
      * @returns New set of Access and Refresh tokens.
      */
-    async exchangeRefreshToken(token: string): Promise<Access>;
+    async exchangeRefreshToken(
+      token: string,
+      options?: { flags?: any },
+    ): Promise<Access>;
   }
 
   /**
