@@ -10,6 +10,13 @@ import SmartCar, {
   WebhookSubscription,
 } from 'smartcar';
 import { PrismaService } from '../prisma/prisma.service';
+
+const GB_FLAG_OPTIONS = {
+  flags: {
+    country: 'GB',
+  },
+};
+
 @Injectable()
 export class SmartCarService {
   private readonly client: AuthClient;
@@ -52,12 +59,17 @@ export class SmartCarService {
       'required:read_vehicle_info',
       // 'required:read_vin',
     ];
-    const options = { state: JSON.stringify({ userId }) };
+
+    const options = {
+      state: JSON.stringify({ userId }),
+      ...GB_FLAG_OPTIONS,
+    };
+
     return this.client.getAuthUrl(scope, options);
   }
 
   async exchangeAsync(code: string, userId: string): Promise<boolean> {
-    const access = await this.client.exchangeCode(code);
+    const access = await this.client.exchangeCode(code, GB_FLAG_OPTIONS);
 
     const smartCarUserId = await SmartCar.getUser(access.accessToken).then(
       (u) => u.id,
@@ -88,6 +100,7 @@ export class SmartCarService {
     if (isPast(smartCarUser.expiration)) {
       const data = await this.client.exchangeRefreshToken(
         smartCarUser.refreshToken,
+        GB_FLAG_OPTIONS,
       );
 
       smartCarUser = await this.prismaService.smartCarUser.update({
