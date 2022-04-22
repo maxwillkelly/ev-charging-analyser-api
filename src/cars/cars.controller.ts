@@ -25,6 +25,7 @@ export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
   @ApiBearerAuth()
+  @UseFilters(SmartCarExceptionFilter)
   @UseGuards(JwtAuthGuard)
   @Get()
   async getCars(
